@@ -13,7 +13,7 @@ var modelBet = -1;
 var totalQuestions = 25;
 var questionAsked = 10;
 //var gameName = "modernizationProj";
-var cloudList = ["SAAS Public", "SAAS Private", "IAAS Public", "IAAS Private", "PAAS Public", "PAAS Private"];
+var cloudList = ["SAAS Public", "SAAS Private", "PAAS Public", "PAAS Private", "IAAS Public", "IAAS Private"];
 var cloudGuess = -1;
 var positions = [];
 var bonusSquares = [];
@@ -26,7 +26,8 @@ var lastEvent = "none";
 var newsArray = ["A cloud just walked into a bar. It dissolved into precipitation.", "Three clouds were seen suspiciously loitering around a tobacco store.", "Prince Cumulus and Princess Cirrostratus have set their wedding day to July of 2016."];
 var tfArray = ["A cloud is made of mostly H2O", "Clouds can block the sun's rays, providing shade.", "Cotton candies are not clouds."]; // Do we need to keep track of which tips were given to user? 
 var ween = false;
-//var QAArray = ["Security", "Scalability", "Integrability", "Availability", "Performance", "Maintainability"]; // TODO: load this up according to the user's selections!
+//var QAArray = ["Security", "Scalability", "Integrability", "Availability", "Performance", "Maintainability"];
+var QAIDList = ["Security", "Performance", "Availability", "Integrability", "Scalability", "Maintainability"];
 
 function piece(name, x, y, sprite, colorR, colorG, colorB) {
     this.name = name;  
@@ -332,6 +333,9 @@ function questions(id, title, QA, ansID, ansTitle, ansPts){
 	];
 	this.answered = false;
 	this.choice = -1;
+	this.clicked = -1;
+	this.comment = "";
+	this.saved = true;
 }
 
 
@@ -619,12 +623,17 @@ function openBetMenu(type){
 	for(var i in clouds){
 		clouds[i].drawResize(true);
 	}
-	betText2.drawResize(false);
 	for(var j in bets){
 		bets[j].drawResize(true);
 	}
 	betButton.text = "Confirm";
 	betButton.drawResize(false);
+	if(mode == 5 && playerCoins < 10){
+		playerCoins = 10;
+		betText2.text = "Your Coins: "+playerCoins
+		alert("You're a bit poor, so we gave you some coins.");
+	}
+	betText2.drawResize(false);
 	context.textAlign="left";
 }
 function openTextMenu(type){
@@ -740,7 +749,7 @@ function openEndMenu(){
 	}
 	bonusText1.drawResize();
 	drawPieces();
-	context.textAlign="left"; // TODO: after accounting for ties, be sure to reward the player with coins if they guessed correct!
+	context.textAlign="left";
 }
 function openMainMenu(){
 	dimOut.draw(); 
@@ -753,7 +762,7 @@ function openMainMenu(){
 	context.textAlign="left";
 }
 
-function makeMove(array){
+function makeMove(array){ // TODO: allow users to add comments when answering questions (character limit?)
 	//var array = [1, 2, 3, 4, 5, 6];
 	//var array = [1, 1, 1, 1, 1, 1]; //Switch arrays to see how it looks like if all 6 is clumped together
 	//console.log("Below");
@@ -925,7 +934,14 @@ function prepGame(){
 	        			if(quesAnsw[i].clicked(mousePos.x, mousePos.y, false)){
 	        				$("#msg").text("Answer number "+(parseInt(i)+1)+" is clicked! "+message);
 	                		//var array = answerQuestion(i);
-	                		makeMove(answerQuestion(i));
+	        				var userTxt = gameName = document.getElementById('userComments').value;
+	        				if(userTxt.indexOf("~") == -1 && userTxt.indexOf("|") == -1){
+	        					QList[curQues].comment = userTxt;
+	        					$("#userComments").val('');
+		                		makeMove(answerQuestion(i));
+	        				} else {
+	        					alert("Please remove special characters ~ and | from your comments below.");
+	        				}
 	                		isClicked = true;
 	            			break;
 	                	}
@@ -1028,37 +1044,43 @@ function prepGame(){
 	    		}
 	    		for(var j in bets){
 	    			if(bets[j].clicked(mousePos.x, mousePos.y, true)){
-	    				if(bet != -1){
-	    					bets[bet].color = "#FFFFFF";
-	    					bets[bet].fontColor = "#001d87";
-	        				context.textAlign = "center";
-	        				bets[bet].drawResize(true);
-	        				context.textAlign = "left";
-	        				playerCoins += parseInt(bets[bet].text);
-	    				}
-	    				if(bet != j){
-	    					bets[j].color = "#001d87";
-	    					bets[j].fontColor = "#FFFFFF";
-	        				context.textAlign = "center";
-	        				bets[j].drawResize(true);
-	        				context.textAlign = "left";
-	        				bet = j;
-	        				playerCoins -= parseInt(bets[bet].text); // if player have 0 coins...
-	        				betText2.text = "Your Coins: "+playerCoins;
-	        				context.fillStyle="#c2dcd6";
-	        	    		context.fillRect(710, 730, 500, 50);
-	        	    		context.textAlign = "center";
-	        	    		betText2.drawResize(false);
-	        	    		context.textAlign = "left";
-	        				break;
+	    				if((bet != -1 && parseInt(bets[j].text) <= playerCoins + parseInt(bets[bet].text)) ||
+	    						(bet == -1 && parseInt(bets[j].text) <= playerCoins)){
+		    				if(bet != -1){
+		    					bets[bet].color = "#FFFFFF";
+		    					bets[bet].fontColor = "#001d87";
+		        				context.textAlign = "center";
+		        				bets[bet].drawResize(true);
+		        				context.textAlign = "left";
+		        				playerCoins += parseInt(bets[bet].text); 
+		    				}
+		    				if(bet != j){
+		    					bets[j].color = "#001d87";
+		    					bets[j].fontColor = "#FFFFFF";
+		        				context.textAlign = "center";
+		        				bets[j].drawResize(true);
+		        				context.textAlign = "left";
+		        				bet = j;
+		        				playerCoins -= parseInt(bets[bet].text); 
+		        				betText2.text = "Your Coins: "+playerCoins;
+		        				context.fillStyle="#c2dcd6";
+		        	    		context.fillRect(710, 730, 500, 50);
+		        	    		context.textAlign = "center";
+		        	    		betText2.drawResize(false);
+		        	    		context.textAlign = "left";
+		        				break;
+		    				} else {
+		    					bet = -1;
+		    					betText2.text = "Your Coins: "+playerCoins;
+		        				context.fillStyle="#c2dcd6";
+		        	    		context.fillRect(710, 730, 500, 50);
+		        	    		context.textAlign = "center";
+		        	    		betText2.drawResize(false);
+		        	    		context.textAlign = "left";
+		    					break;
+		    				}
 	    				} else {
-	    					bet = -1;
-	    					betText2.text = "Your Coins: "+playerCoins;
-	        				context.fillStyle="#c2dcd6";
-	        	    		context.fillRect(710, 730, 500, 50);
-	        	    		context.textAlign = "center";
-	        	    		betText2.drawResize(false);
-	        	    		context.textAlign = "left";
+	    					console.log("too poor!")
 	    					break;
 	    				}
 	    			}
@@ -1141,10 +1163,12 @@ function prepGame(){
 	    	}
 	    	sessionStorage.setItem('QA', JSON.stringify(QAArray));
 	    	sessionStorage.setItem('pieces', JSON.stringify(pieces));
+	    	sessionStorage.setItem('QList', JSON.stringify(QList));
 	    	window.location = "SpiderChart.html"
 	    } else if(mode == 10){
 	    	if(menuBG.clicked(mousePos.x, mousePos.y, true)){
 	    		if(menuSave.clicked(mousePos.x, mousePos.y, true)){
+	    			saveGame();
 	    			mode = 0;
 	    			draw(positions, false);
 	    		} else if(menuQuit.clicked(mousePos.x, mousePos.y, true)){
@@ -1179,6 +1203,8 @@ function answerQuestion(ans){
 		}
 		QList[curQues].answered = true;
 		QList[curQues].choice = QList[curQues].answer[ans].id;
+		QList[curQues].clicked = ans;
+		QList[curQues].saved = false;
 		//console.log(QAArray[QList[curQues].QA]);
 		//console.log(arr);
 		nextQuestion();
@@ -1285,6 +1311,46 @@ function getDB(){
 			console.log(data.QuestionID+": "+data.QuestionValue);
 		});
 	});
+}
+
+function saveGame(){
+	//'1,1,10.' Around 180 characters (6 clouds and 6 QAs)
+	//QAID, cloudID, score
+	var cloudString = "";
+	for(var i = 0, len = pieces.length; i < len; i++){
+		for(var j = 0, len = pieces[i].QAScores.length; j < len; j++){
+			cloudString += QAIDList.indexOf(QAArray[j])+","+cloudList.indexOf(pieces[i].cloud)+","+pieces[i].QAScores[j]+".";
+		}
+	}
+	console.log(cloudString);
+	//'1|5|1|cool~' Around 7+comment characters per question, we can allow 29 character comments assuming max length is 180 and we save every 5 questions
+	//#quesID, ansID (if answered), isAnswered, userNotes
+	var qString = ""; // TODO Check if ~ or | is in user notes? 
+	for(var i = 0, len = QList.length; i < len; i++){
+		if(!QList[i].saved){
+			qString += QList[i].id+"|"+QList[i].choice+"|";
+			if(QList[i].answered){
+				qString += "1|";
+			} else {
+				qString += "0|";
+			}
+			qString += QList[i].comment+"~";
+			QList[i].saved = true;
+		}
+	}
+	console.log(qString);
+	/*var gameInfo = { // Maybe autosave every X questions?
+		function : ??,
+		LanID: user,
+		GameID: GameID,
+		inModelID: modelBet,
+		IsGameCompleted : QAArray,
+		ModelBettingCoins : bet,
+		NetCoins : playerStartingCoins-playerCoins,
+		Clouds : cloudString,
+		Qs : qString
+	};
+	$.post("/game1.1/gameController", gameInfo, function(list) {}*/
 }
 
 var boardSpaces = [
