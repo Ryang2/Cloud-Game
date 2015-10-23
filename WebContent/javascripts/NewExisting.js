@@ -1,9 +1,11 @@
 var gameName = "";
 var gameDescription = "";
 var QAArray = [];
+var GameID;
 
 angular.module('GameApp', {}) 
 .controller('dataController', function($scope, $sce) {
+	//$scope.filteredGames = gamesData;
     $scope.filteredGames = [
                             {
                             	id : 0,
@@ -55,6 +57,7 @@ angular.module('GameApp', {})
                              }];
     $scope.sortCol = 'rank';
     $scope.sortReverse = false;
+    //$scope.$apply();
     $scope.sortBy = function(colName) { 
         if ($scope.sortCol == colName) {
             $scope.sortReverse = !$scope.sortReverse;
@@ -62,10 +65,23 @@ angular.module('GameApp', {})
             $scope.sortReverse = false;
         }
         $scope.sortCol = colName;
-        //$scope.$apply(); selectGame
     }
     $scope.selectGame = function(gameID) { 
         console.log(gameID);
+        GameID = gameID;
+        /*var gameInfo = {
+        		function : ??,
+				LanID: user,
+				GameID: gameID
+		};
+        $.post("/game1.1/gameController", gameInfo, function(list) {
+		 	$.each(list, function(index, data) {
+				// Make an array that not only has the questions, but clouds, and user data
+			});
+			prepGame(); //Or some sort of function that loads in the data
+			$("#NQA").css("display", "none");
+			$("#game").css("display", "");
+		}*/
     }
 });
 
@@ -113,7 +129,23 @@ $(document).ready(function(){
 		if(QAArray.length == 0){
 			alert("Please select at least one quality attribute before beginning the game.");
 		} else {
-			prepGame();
+			/*var gameInfo = {
+	    		function : ??,
+				LanID: user,
+				GameName: gameName,
+				GameDescription: gameDescription,
+				QAArray : QAArray
+			};
+		    $.post("/game1.1/gameController", gameInfo, function(list) {
+		    	GameID = list[0].GameID;
+			 	$.each(list, function(index, data) {
+					// Make an array that organizes the questions
+				});
+				prepGame(); // Which should load in the questions data! 
+				$("#NQA").css("display", "none");
+				$("#game").css("display", "");
+			}*/
+			prepGame(); // TODO: remove since it's already in above
 			$("#NQA").css("display", "none");
 			$("#game").css("display", "");
 		}
