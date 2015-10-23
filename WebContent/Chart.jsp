@@ -162,9 +162,9 @@
 			    segmentShowStroke: false,
 			    animateRotate: true,
 			    animateScale: false,
-			    percentageInnerCutout: 50,
-			    tooltipTemplate: "<%= value %>%"
-			}
+			    percentageInnerCutout: 50}
+			    <%-- tooltipTemplate: "<%= value %>%" --%>
+	//}
 		
 		myRadarChart = new Chart(chart).Radar(radarChartData,
 				{
