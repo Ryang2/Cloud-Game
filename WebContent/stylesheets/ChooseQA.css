@@ -34,3 +34,16 @@ body {
 .FGText{
 	color: #FFFFFF;
 }
+
+a:link {
+    color: #00FF00;
+}
+a:visited {
+    color: #00ffff;
+}
+a:hover {
+    color: #acff88;
+}
+a:active {
+    color: #008080;
+}

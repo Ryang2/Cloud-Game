@@ -18,6 +18,9 @@ $(document).ready(function(){
 				});
 				user = credentials.username;
 				console.log(gamesData);
+				sessionStorage.setItem('user', user);
+	    		sessionStorage.setItem('coins', list[0].Coins);
+	    		sessionStorage.setItem('games', JSON.stringify(gamesData));
 			}*/
 			console.log(credentials.username+" is logging in with password: "+credentials.password);
 			window.location = "NewExisting.html"
@@ -41,10 +44,14 @@ $(document).ready(function(){
 		}
 	});
 });
-
 function gameInstance(id, name, description, done){
-	this.GameID = id;
-	this.GameName = name;
-	this.GameDescription = description;
-	this.IsGameCompleted = done;
+	this.id = id;
+	this.name = name;
+	this.description = description;
+	this.done = done;
+	if(this.done == 1){
+		this.completed = "Yes";
+	} else {
+		this.completed = "No";
+	}
 }
