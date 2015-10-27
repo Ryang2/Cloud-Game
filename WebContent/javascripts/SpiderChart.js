@@ -34,6 +34,7 @@ $(document).ready(function() {
 	pcs = sessionStorage.getItem('QList');
 	var QList = $.parseJSON(pcs);
 	
+	console.log(clouds);
 	console.log(QList);
 	console.log(QList[0]);
 	console.log(QList[0].answer);

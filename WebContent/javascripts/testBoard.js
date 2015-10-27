@@ -22,10 +22,12 @@ var showBonus = 0; // The number of turns bonus squares are drawn on the board (
 var bonusCount = 0; // Keeps track of the # bonus squares that are landed on in a turn
 //var lowEvents = ["Facts and Tips", "Current News", "Show Bonus Squares", "Guess Which Cloud is First", "Get Coins"]; // News is not in DB yet
 var lowEvents = ["Facts and Tips", "Show Bonus Squares", "Guess Which Cloud is First", "Get Coins"];
+//var lowEvents = ["Change Your Bet", "Change Your Bet"]; 
 var midEvents = ["Guess Which Cloud is First", "Change Your Bet", "Get Coins"];
 var lastEvent = "none";
-var newsArray = ["A cloud just walked into a bar. It dissolved into precipitation.", "Three clouds were seen suspiciously loitering around a tobacco store.", "Prince Cumulus and Princess Cirrostratus have set their wedding day to July of 2016."];
-var tfArray = ["A cloud is made of mostly H2O", "Clouds can block the sun's rays, providing shade.", "Cotton candies are not clouds."]; // Do we need to keep track of which tips were given to user? 
+//var newsArray = ["A cloud just walked into a bar. It dissolved into precipitation.", "Three clouds were seen suspiciously loitering around a tobacco store.", "Prince Cumulus and Princess Cirrostratus have set their wedding day to July of 2016."];
+//var tfArray = ["A cloud is made of mostly H2O", "Clouds can block the sun's rays, providing shade.", "Cotton candies are not clouds."]; // Do we need to keep track of which tips were given to user? 
+var tipsArray = [];
 var ween = false;
 //var QAArray = ["Security", "Scalability", "Integrability", "Availability", "Performance", "Maintainability"];
 var QAIDList = ["Security", "Performance", "Availability", "Integrability", "Scalability", "Maintainability"];
@@ -659,13 +661,27 @@ function openBetMenu(type){
 }
 function openTextMenu(type){ // TODO: load the news and tips from the database!
 	if(type == 0){ // facts/tips
-		if(tfArray.length > 0){
-			var num = Math.floor(Math.random() * tfArray.length);
-			bonusText1.text = "Did you know?";
-			bonusText2.text = tfArray[num];
-			tfArray.splice(num, 1);
+		if(tipsArray.length > 0){
+			var num = 0;
+			console.log(tipsArray);
+			console.log(QList[curQues-1].QA);
+			console.log(tipsArray[0].QA);
+			while(num < QList.length && QList[curQues-1].QA != tipsArray[num].QA && tipsArray[num].QA != "None"){
+				console.log(QList[curQues-1].QA);
+				console.log(tipsArray[num].QA);
+				num += 1;
+			}
+			console.log(num);
+			if(num < QList.length){
+				bonusText1.text = tipsArray[num].TipName;
+				bonusText2.text = tipsArray[num].TipDescription;
+				tipsArray.splice(num, 1);
+			} else {
+				bonusText1.text = "No tips to display for this question";
+				bonusText2.text = "Sorry!";
+			}
 		} else {
-			bonusText1.text = "No more tips/facts to display";
+			bonusText1.text = "No more tips to display";
 			bonusText2.text = "Sorry!";
 		}
 	} else { // news
@@ -836,7 +852,7 @@ function makeMove(array){ // TODO: allow users to add comments when answering qu
 		pieces[i].loc = dest;
 		boardSpaces[dest].occupants.push(i);
 		//pieces[5-i].score += array[num];
-		pieces[i].score += array[i];
+		//pieces[i].score += array[i];
 		positions.push({
 			piece: pieces[i],
 			location: pieces[i].loc,
@@ -848,7 +864,7 @@ function makeMove(array){ // TODO: allow users to add comments when answering qu
 	//getDB();
 }
 //$(document).ready(function() {
-function prepGame(qQues, qClouds){ // Function to run when starting the game. TODO Will need to change to load questions, and maybe need to create a different version for loading a saved game.
+function prepGame(qQues, qTips, qClouds){ // Function to run when starting the game. TODO Will need to change to load questions, and maybe need to create a different version for loading a saved game.
 	canvas = document.getElementById("interface");
 	context = canvas.getContext('2d');
 	
@@ -867,7 +883,9 @@ function prepGame(qQues, qClouds){ // Function to run when starting the game. TO
 	}
 	shuffle(QList);
 	console.log(QList);
-
+	tipsArray = qTips.slice();
+	shuffle(tipsArray);
+	console.log(tipsArray);
 	setBonusSquares(MAX_BONUS_SQUARES);
 	nextQuestion(); 
 	
@@ -912,6 +930,14 @@ function prepGame(qQues, qClouds){ // Function to run when starting the game. TO
 		mode = 11;
 		makeMove([0, 0, 0, 0, 0, 0]); //TODO: see how it goes!
 		for(var l = 0; l < bets.length; l++){if(bets[l].text = ""+bet){bet = l;break;}}
+		if(modelBet > -1){
+			clouds[modelBet].color = "#001d87";
+			clouds[modelBet].fontColor = "#FFFFFF";
+		}
+		if(bet > -1){
+			bets[bet].color = "#001d87";
+			bets[bet].fontColor = "#FFFFFF";
+		}
 	}
 	
 	console.log(gameName);
@@ -1208,7 +1234,8 @@ function prepGame(qQues, qClouds){ // Function to run when starting the game. TO
 	    	}
 	    	sessionStorage.setItem('QA', JSON.stringify(QAArray));
 	    	sessionStorage.setItem('pieces', JSON.stringify(pieces));
-	    	sessionStorage.setItem('QList', JSON.stringify(QList));
+	    	AList.push.apply(AList, QList);
+	    	sessionStorage.setItem('QList', JSON.stringify(AList));
 	    	window.location = "SpiderChart.html"
 	    } else if(mode == 10){
 	    	if(menuBG.clicked(mousePos.x, mousePos.y, true)){
@@ -1242,10 +1269,17 @@ function answerQuestion(ans){ // Calculates how many spaces to move each piece
 		for(var i = 0, len = pieces.length; i < len; i++){
 			var score = pts[cloudList.indexOf(pieces[i].cloud)];
 			arr.push(score);
-			var QAIndex = QAArray.indexOf(QList[curQues].QA);
+			var QAIndex = QAArray.indexOf(""+(QAIDList.indexOf(QList[curQues].QA)+1));
+			console.log(QAIDList.indexOf(QList[curQues].QA));
+			console.log(QList[curQues].QA);
+			console.log(QAArray);
+			console.log(QAIndex);
+			pieces[i].score += score;
+			console.log("Before: "+pieces[i].QAScores[QAIndex]);
 			if(QAIndex > -1){
 				pieces[i].QAScores[QAIndex] += score; 
 			}
+			console.log("After: "+pieces[i].QAScores[QAIndex]);
 		}
 		QList[curQues].answered = true;
 		QList[curQues].choice = QList[curQues].answer[ans].id;
@@ -1253,6 +1287,7 @@ function answerQuestion(ans){ // Calculates how many spaces to move each piece
 		QList[curQues].saved = false;
 		//console.log(QAArray[QList[curQues].QA]);
 		//console.log(arr);
+		console.log(pieces);
 		nextQuestion();
 		return arr;
 	}
