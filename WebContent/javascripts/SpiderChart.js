@@ -38,6 +38,7 @@ $(document).ready(function() {
 	console.log(QList);
 	console.log(QList[0]);
 	console.log(QList[0].answer);
+	console.log(QAs);
 	
 	for(var i = 0, len = QList.length; i < len; i++){
 		var tempString = "For the question: \""+QList[i].title+"\", you answered: \""+QList[i].answer[QList[i].clicked].title;

@@ -94,14 +94,14 @@
 		 	 		<thead>
 		  	 			<tr>
 						<th ng-click="sortBy('name')" id="nameTitle">Name of Game</th>
-						<th ng-click="sortBy('description')" id="descriptionTitle">Game Description</th>
+						<th ng-click="sortBy('des')" id="descriptionTitle">Game Description</th>
 						<th ng-click="sortBy('completed')" id="completedTitle">Completed?</th>
 						</tr>
 					</thead>
 		   	 		<tbody>
 		  	 	    	<tr ng-repeat="row in games = (filteredGames | filter : {title: searchString} | orderBy : sortCol : sortReverse)"> 
 							<td id="name">{{row.name}}</td>
-							<td id="description">{{row.description}}</td>
+							<td id="description">{{row.des}}</td>
 							<td id="completed">{{row.completed}}</td>
 							<td id="select"><button name="submit" id=ESelect{{row.id}} class="btn btn-default" value={{row.id}} ng-click="selectGame(row.id)">Select</button></td>
 			    		</tr> 
@@ -122,8 +122,8 @@
 					 <canvas name="game" id="interface" width="1440" height="1200" style="border:1px dotted;"></canvas>
 				</div>
 			</figure>
-			<p class="FGText">Add additional comments for questions here. Please do not use the characters "~" and "|". Max characters is currently 29.</p>
-			<input type="text"  id="userComments" maxlength="29" size="35">
+			<p class="FGText">Add additional comments for questions here. Please do not use the characters "~" and "|". Max characters is currently 50.</p>
+			<input type="text"  id="userComments" maxlength="50" size="35">
 			</br>
 			<div class="FGText">This game used icons by <a href="http://www.freepik.com" title="Freepik">Freepik</a> and <a href="http://www.typicons.com" title="Stephen Hutchings">Stephen Hutchings</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> are licensed under <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
 		</div>

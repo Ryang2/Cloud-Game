@@ -6,12 +6,12 @@ var CANVAS_WIDTH = 1440;
 var CANVAS_HEIGHT = 1200;
 var mode = 4; // 0: normal, 1: help, 2: before event, 3: during event, 4: pregame help, 5: pregame select bet, 
 			  // 6: facts/tips display screen, 7: news display screen (if needed), 8: guess the cloud, 9: game over, 10 menu, 11 onLoad
-//var playerStartingCoins = 100; // The amount of coins the user has before starting the game
-var playerCoins = 100; // Coins kept track in the game
+var playerStartingCoins = 0; // The amount of coins the user has before starting the game
+var playerCoins = 0; // Coins kept track in the game
 //var bet = -1; // index of bets array
 //var modelBet = -1; // index of cloudList, the cloud user bets on
-var totalQuestions = 25; // Not yet tied to Q's yet TODO
-var questionAsked = 10; //
+var totalQuestions = 25; 
+var questionAsked = -1; 
 //var gameName = "modernizationProj";
 var cloudList = ["SAAS Public", "SAAS Private", "PAAS Public", "PAAS Private", "IAAS Public", "IAAS Private"];
 var cloudGuess = -1; // Used to store the index in the "Guess Which Cloud is First" event
@@ -39,10 +39,13 @@ var pieceColors =[
                   {red: "50", green: "50", blue: "50"},
                   {red: "0", green: "180", blue: "0"},
                   {red: "255", green: "0", blue: "255"}
-                  ]
-var pieces = [];
-var AList = [];
-var QList = [];
+                  ];
+var pieces = []; // Holds the game pieces
+var AList = []; // Holds the answered questions at start of game (when loading saved game)
+var QList = [];  // Holds the questions to be answered. Randomized for your convenience
+var cloudString = [""]; // String representation of cloud array for saving to DB
+var qString = [""]; // String representation of questions array for saving to DB
+var currentSave = 0; // Determines which data to save (if case DB gives an unfavorable response)
 
 
 function piece(name, x, y, sprite, colorR, colorG, colorB) { // Function for creating the pieces in the game, as well as the floating position indicators
@@ -319,7 +322,7 @@ var cloud4 = new screenElem("#FFFFFF", null, 390, 545, 240, 120, true, cloudList
 var cloud5 = new screenElem("#FFFFFF", null, 710, 545, 240, 120, true, cloudList[4], 0, 72, "36px sans-serif", "#001d87");
 var cloud6 = new screenElem("#FFFFFF", null, 1030, 545, 240, 120, true, cloudList[5], 0, 72, "36px sans-serif", "#001d87");
 var clouds = [cloud1, cloud2, cloud3, cloud4, cloud5, cloud6];
-var betText2 = new screenElem("#c2dcd6", null, 710, 730, 480, 50, true, "Your Coins: "+playerCoins, 0, 30, "bold 36px sans-serif", "#000000");
+var betText2 = new screenElem("#c2dcd6", null, 710, 730, 480, 50, true, "Your Coins: "+(parseInt(playerCoins)+parseInt(playerStartingCoins)), 0, 30, "bold 36px sans-serif", "#000000");
 var bet1 = new screenElem("#FFFFFF", null, 366, 828, 120, 60, true, "10", 0, 42, "36px sans-serif", "#001d87"); 
 var bet2 = new screenElem("#FFFFFF", null, 602, 828, 120, 60, true, "20", 0, 42, "36px sans-serif", "#001d87");
 var bet3 = new screenElem("#FFFFFF", null, 838, 828, 120, 60, true, "50", 0, 42, "36px sans-serif", "#001d87");
@@ -356,7 +359,6 @@ function questions(id, title, QA, ansID, ansTitle, ansPts){ // Function to creat
 	this.choice = -1;
 	this.clicked = -1;
 	this.comment = "";
-	this.saved = true;
 }
 
 
@@ -380,7 +382,7 @@ function questions(id, title, QA, ansID, ansTitle, ansPts){ // Function to creat
         				 ["5", "4", "3", "2", "1"],
                 		 [1, 2, 3, 4, 5, 6, 2, 4, 5, 6, 3, 1, 4, 5, 2, 6, 3, 1, 5, 4, 2, 3, 1, 6, 6, 5, 4, 3, 2, 1, 3, 5, 6, 1, 4, 2])
                 ];*/
-var curQues = -1; // Keeps track of the questions asked. TODO QList will need to be randomized once at the beginning of the game (and sorted by whether it was asked or not)
+var curQues = -1; // Keeps track of the questions asked. 
 
 // Main draw function. Calls other draw functions depending on mode. Drawing using onload is asynchronous so need to be timed correctly
 function draw(moveData, isMoving) { 
@@ -651,7 +653,7 @@ function openBetMenu(type){
 	}
 	betButton.text = "Confirm";
 	betButton.drawResize(false);
-	if(lastEvent == "none" && playerCoins < 10){
+	if(lastEvent == "none" && playerCoins+playerStartingCoins < 10){
 		playerCoins = 10;
 		betText2.text = "Your Coins: "+playerCoins
 		alert("You're a bit poor, so we gave you some coins.");
@@ -659,7 +661,7 @@ function openBetMenu(type){
 	betText2.drawResize(false);
 	context.textAlign="left";
 }
-function openTextMenu(type){ // TODO: load the news and tips from the database!
+function openTextMenu(type){
 	if(type == 0){ // facts/tips
 		if(tipsArray.length > 0){
 			var num = 0;
@@ -788,6 +790,8 @@ function openEndMenu(){
 	bonusText1.drawResize();
 	drawPieces();
 	context.textAlign="left";
+	saveGame();
+	// TODO close tab warning if not finished saving
 }
 function openMainMenu(){
 	dimOut.draw(); 
@@ -800,7 +804,7 @@ function openMainMenu(){
 	context.textAlign="left";
 }
 
-function makeMove(array){ // TODO: allow users to add comments when answering questions (character limit?)
+function makeMove(array){ // TODO: character limit?
 	//var array = [1, 2, 3, 4, 5, 6];
 	//var array = [1, 1, 1, 1, 1, 1]; //Switch arrays to see how it looks like if all 6 is clumped together
 	//console.log("Below");
@@ -811,10 +815,12 @@ function makeMove(array){ // TODO: allow users to add comments when answering qu
 		//var num = Math.floor(Math.random() * (i - 0 + 1)); // Get the number of spaces to move (currently random)
 		//if(i == 2){array[num]=1;}else if(i == 4){array[num]=31;} // test code to simulate lapping behavior
 		//var dest = pieces[5-i].loc+array[num];
-		var dest = pieces[i].loc+array[i];
+		var dest = pieces[i].loc+parseInt(array[i]);
+		//console.log(dest);
 		if(dest > 30){ // If the end is reached, loop back to start
 			dest -= 30;
 		}
+		//console.log(dest);
 		if(boardSpaces[dest].occupants.length > 0){ // If there's already a piece in destination (we don't want the pieces to completely overlap each other)
 			var numPieces = 0;
 			for(var j in boardSpaces[dest].occupants) { // Check to see if the occupants have moved yet this turn
@@ -864,7 +870,7 @@ function makeMove(array){ // TODO: allow users to add comments when answering qu
 	//getDB();
 }
 //$(document).ready(function() {
-function prepGame(qQues, qTips, qClouds){ // Function to run when starting the game. TODO Will need to change to load questions, and maybe need to create a different version for loading a saved game.
+function prepGame(qQues, qTips, qClouds){ // Function to run when starting the game.
 	canvas = document.getElementById("interface");
 	context = canvas.getContext('2d');
 	
@@ -883,6 +889,8 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	}
 	shuffle(QList);
 	console.log(QList);
+	totalQuestions = AList.length + QList.length;
+	questionAsked += AList.length;
 	tipsArray = qTips.slice();
 	shuffle(tipsArray);
 	console.log(tipsArray);
@@ -920,15 +928,16 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 			var num = Math.floor(Math.random() * tempList.length);
 			pieces[pieces.length-1].cloud = cloudList[tempList[num].ModelID-1]; // cloud qascore, score location
 			pieces[pieces.length-1].QAScores = tempList[num].ModelAnswerValue.slice();
-			var tempscore = 0; for(var o = 0; o < pieces[pieces.length-1].QAScores.length; o++){tempscore+=pieces[pieces.length-1].QAScores[o];}
+			var tempscore = 0; for(var o = 0; o < pieces[pieces.length-1].QAScores.length; o++){tempscore+=parseInt(pieces[pieces.length-1].QAScores[o]);}
 			pieces[pieces.length-1].score = tempscore;
 			var temploc = tempscore%31;
+			console.log(temploc);
 			pieces[pieces.length-1].loc = temploc;
 			tempList.splice(num, 1);
 		}
 		boardSpaces[0].occupants.length = 0;
 		mode = 11;
-		makeMove([0, 0, 0, 0, 0, 0]); //TODO: see how it goes!
+		makeMove([0, 0, 0, 0, 0, 0]);
 		for(var l = 0; l < bets.length; l++){if(bets[l].text = ""+bet){bet = l;break;}}
 		if(modelBet > -1){
 			clouds[modelBet].color = "#001d87";
@@ -940,7 +949,7 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 		}
 	}
 	
-	console.log(gameName);
+	//console.log(gameName);
 	/*for(var j in pieces){
 		console.log("The "+pieces[j].name+" piece is the cloud "+pieces[j].cloud+".");
 	}*/
@@ -1115,8 +1124,8 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	    		}
 	    		for(var j in bets){
 	    			if(bets[j].clicked(mousePos.x, mousePos.y, true)){
-	    				if((bet != -1 && parseInt(bets[j].text) <= playerCoins + parseInt(bets[bet].text)) ||
-	    						(bet == -1 && parseInt(bets[j].text) <= playerCoins)){
+	    				if((bet != -1 && parseInt(bets[j].text) <= playerCoins+playerStartingCoins + parseInt(bets[bet].text)) ||
+	    						(bet == -1 && parseInt(bets[j].text) <= playerCoins+playerStartingCoins)){
 		    				if(bet != -1){
 		    					bets[bet].color = "#FFFFFF";
 		    					bets[bet].fontColor = "#001d87";
@@ -1133,7 +1142,7 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 		        				context.textAlign = "left";
 		        				bet = j;
 		        				playerCoins -= parseInt(bets[bet].text); 
-		        				betText2.text = "Your Coins: "+playerCoins;
+		        				betText2.text = "Your Coins: "+(parseInt(playerCoins)+parseInt(playerStartingCoins));
 		        				context.fillStyle="#c2dcd6";
 		        	    		context.fillRect(710, 730, 500, 50);
 		        	    		context.textAlign = "center";
@@ -1142,7 +1151,7 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 		        				break;
 		    				} else {
 		    					bet = -1;
-		    					betText2.text = "Your Coins: "+playerCoins;
+		    					betText2.text = "Your Coins: "+(parseInt(playerCoins)+parseInt(playerStartingCoins));
 		        				context.fillStyle="#c2dcd6";
 		        	    		context.fillRect(710, 730, 500, 50);
 		        	    		context.textAlign = "center";
@@ -1169,7 +1178,7 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	    					mode = 0;
 	        				draw(null, false);
 	    				} else {
-	    					alert("You have changed your bet to "+bets[bet].text+" coins on "+cloudList[modelBet]+".");
+	    					alert("You have changed your bet to "+bets[bet].text+" coins on "+cloudList[modelBet]+"."); // TODO: don't display this message if bet hasn't actually changed
 	    					mode = 0;
 	    					draw(positions, false);
 	    				}
@@ -1230,7 +1239,12 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	    	if(ween){
 	    		var reward = parseInt(bets[bet].text)*2
 	    		playerCoins += reward;
-	    		alert("You've won the bet! You gained "+reward+" coins and now have "+playerCoins+" coins.");
+	    		alert("You've won the bet! You gained "+reward+" coins and now have "+(parseInt(playerCoins)+parseInt(playerStartingCoins))+" coins.");
+	    	}
+	    	for(var i = 0; i < QAArray.length; i++){
+	    		if(QAIDList[QAArray[i]-1] != null){
+	    			QAArray[i] = QAIDList[QAArray[i]-1];
+	    		}
 	    	}
 	    	sessionStorage.setItem('QA', JSON.stringify(QAArray));
 	    	sessionStorage.setItem('pieces', JSON.stringify(pieces));
@@ -1264,29 +1278,35 @@ function answerQuestion(ans){ // Calculates how many spaces to move each piece
 		nextQuestion();
 	} else {
 		var pts = QList[curQues].answer[ans].points;
-		console.log(pts);
+		//console.log(pts);
 		var arr = [];
 		for(var i = 0, len = pieces.length; i < len; i++){
 			var score = pts[cloudList.indexOf(pieces[i].cloud)];
+			//console.log(score);
 			arr.push(score);
 			var QAIndex = QAArray.indexOf(""+(QAIDList.indexOf(QList[curQues].QA)+1));
-			console.log(QAIDList.indexOf(QList[curQues].QA));
-			console.log(QList[curQues].QA);
-			console.log(QAArray);
-			console.log(QAIndex);
-			pieces[i].score += score;
-			console.log("Before: "+pieces[i].QAScores[QAIndex]);
+			//console.log(QAIDList.indexOf(QList[curQues].QA));
+			//console.log(QList[curQues].QA);
+			//console.log(QAArray);
+			//console.log(QAIndex);
+			pieces[i].score = parseInt(pieces[i].score) + parseInt(score);
+			//console.log(score);
+			//console.log("Before: "+pieces[i].QAScores[QAIndex]);
 			if(QAIndex > -1){
-				pieces[i].QAScores[QAIndex] += score; 
+				pieces[i].QAScores[QAIndex] = parseInt(pieces[i].QAScores[QAIndex]) + parseInt(score); 
 			}
-			console.log("After: "+pieces[i].QAScores[QAIndex]);
+			//console.log(score);
+			//console.log("After: "+pieces[i].QAScores[QAIndex]);
 		}
 		QList[curQues].answered = true;
 		QList[curQues].choice = QList[curQues].answer[ans].id;
 		QList[curQues].clicked = ans;
-		QList[curQues].saved = false;
+		qString[qString.length-1] += QList[curQues].id+"|"+QList[curQues].choice+"|1|"+QList[curQues].comment+"~";
+		if(qString[qString.length-1].length > 200){ // max is 255
+			saveGame();
+		}
 		//console.log(QAArray[QList[curQues].QA]);
-		//console.log(arr);
+		console.log(arr);
 		console.log(pieces);
 		nextQuestion();
 		return arr;
@@ -1302,7 +1322,9 @@ function nextQuestion(){ // Load the next question into the screen elements, or 
 			//console.log(QList);
 			quesAnsw[i].text = QList[curQues].answer[i].title;
 		}
+		questionAsked += 1;
 	} else {
+		questionAsked += 1;
 		mode = 9;
 	}
 }
@@ -1356,17 +1378,18 @@ function drawSquares() { // draw the screen elements
 	// Draw HUD elements
     context.font = 'bold 18pt Calibri';
     context.fillStyle = 'black';
-    console.log(gameName);
+    //console.log(gameName);
     context.fillText(gameName, 10, 25);
     context.font = '18pt Calibri';
     context.fillStyle = 'black';
     context.textAlign="center"; 
-    console.log(": "+bet+": "+modelBet);
+    //console.log(": "+bet+": "+modelBet);
     if(bet > -1 && modelBet > -1){context.fillText("Bet: "+bets[bet].text+" coins on "+cloudList[modelBet], 723, 54);}
     context.textAlign = "right";
     context.fillText(questionAsked+"/"+totalQuestions+" Questions Answered", 1432, 25);
     context.textAlign = "left";
-    context.fillText("Your coins: "+playerCoins, 10, 54);
+    console.log("Didn't change: "+playerStartingCoins);
+    context.fillText("Your coins: "+(parseInt(playerCoins)+parseInt(playerStartingCoins)), 10, 54);
     // Draw Menu buttons
     menuButton.draw();
     helpButton.draw();
@@ -1387,28 +1410,20 @@ function setBonusSquares(number){
 	}
 }
 
-function getDB(){ // Test function for end-to-end connectivity
-	var URL = "/game1.1/gameController";
-	$.getJSON(URL, function(list) {
-		$.each(list, function(index, data) {
-			console.log(data.QuestionID+": "+data.QuestionValue);
-		});
-	});
-}
-
 function saveGame(){ 
-	//'1,1,10.' Around 180 characters (6 clouds and 6 QAs)
+	console.log("save game");
+	//'1,1,10.' Around 180 characters (6 clouds and 6 QAs) // TODO check if there's anything that actually needes to be saved
 	//QAID, cloudID, score
-	var cloudString = "";
+	var tempCS = "";
 	for(var i = 0, len = pieces.length; i < len; i++){
 		for(var j = 0, len = pieces[i].QAScores.length; j < len; j++){
-			cloudString += QAIDList.indexOf(QAArray[j])+","+cloudList.indexOf(pieces[i].cloud)+","+pieces[i].QAScores[j]+".";
+			tempCS += QAIDList.indexOf(QAArray[j])+","+cloudList.indexOf(pieces[i].cloud)+","+pieces[i].QAScores[j]+".";
 		}
 	}
-	console.log(cloudString);
+	cloudString[cloudString.length-1] = tempCS;
 	//'1|5|1|cool~' Around 7+comment characters per question, we can allow 29 character comments assuming max length is 180 and we save every 5 questions
 	//#quesID, ansID (if answered), isAnswered, userNotes
-	var qString = ""; // TODO Check if ~ or | is in user notes? 
+	/*var qString = ""; // TODO Check if ~ or | is in user notes? 
 	for(var i = 0, len = QList.length; i < len; i++){
 		if(!QList[i].saved){
 			qString += QList[i].id+"|"+QList[i].choice+"|";
@@ -1420,9 +1435,23 @@ function saveGame(){
 			qString += QList[i].comment+"~";
 			QList[i].saved = true;
 		}
-	}
+	}*/
+	
+	cloudString.push("");
+	qString.push("");
+	console.log(cloudString);
 	console.log(qString);
-	/*var gameInfo = { // Maybe autosave every X questions?
+	/*"LANID");
+			String gameName = request.getParameter("gameName");
+			String gameDesc = request.getParameter("gameDesc");
+			String gameId = request.getParameter("gameID");
+			String modelId = request.getParameter("cloudGuess");
+			String completed = request.getParameter("completed");
+			String betCoins = request.getParameter("bets[bet].text");
+			String netCoins = request.getParameter("playerCoins");
+			String clouds = request.getParameter("clouds"); //"1,1,100.1,2,200.1,3,30.1,4,400.1,5,50.1,6,60.";
+			String questions = request.getParameter("questions"
+	 * var gameInfo = { // Maybe autosave every X questions?
 		function : ??,
 		LanID: user,
 		GameID: GameID,
@@ -1430,10 +1459,49 @@ function saveGame(){
 		IsGameCompleted : QAArray,
 		ModelBettingCoins : bet,
 		NetCoins : playerStartingCoins-playerCoins,
-		Clouds : cloudString,
-		Qs : qString
+		Clouds : cloudString[currentSave],
+		Qs : qString[currentSave]
 	};
-	$.post("/game1.1/gameController", gameInfo, function(list) {}*/
+	$.post("/game1.1/gameController", gameInfo, function(list) {
+		if(data != null){ //GameID
+			currentSave += 1;
+			if(mode == 9 && currentSave < qString.length){
+				emergencySaveGame();
+			}
+		} else {
+			console.log("Failed to save game instance "+currentSave+".");
+			if(mode == 9){
+				emergencySaveGame();
+			}
+		}
+	}*/
+}
+
+function emergencySaveGame(){ // In case the DB doesn't respond, we want to save all the data in our save arrays at once TODO: prevent the user from closing the tab until save is finished
+	/*var gameInfo = { 
+		function : ??,
+		LanID: user,
+		GameID: GameID,
+		inModelID: modelBet,
+		IsGameCompleted : QAArray,
+		ModelBettingCoins : bet,
+		NetCoins : playerStartingCoins-playerCoins,
+		Clouds : cloudString[currentSave],
+		Qs : qString[currentSave]
+	};
+	$.post("/game1.1/gameController", gameInfo, function(list) {
+		if(data != null){ //GameID
+			currentSave += 1;
+			if(currentSave < qString.length){
+				emergencySaveGame();
+			} else {
+				alert("Saving is finished. You may now close this tab.");
+			}
+		} else {
+			console.log("Failed to emergency save game instance "+currentSave+".");
+			emergencySaveGame();
+		}
+	}*/
 }
 
 function shuffle(array) {

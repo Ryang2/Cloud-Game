@@ -1,9 +1,6 @@
 package controller;
 
-
 import java.io.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
@@ -20,8 +17,6 @@ import bean.Question;
 import java.sql.*;
 import java.util.ArrayList;
 
-
-
 /**
  * Servlet implementation class GameController
  */
@@ -29,200 +24,368 @@ import java.util.ArrayList;
 public class GameController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-    
-	final static String JDBC_DRIVER = "com.mysql.jdbc.Driver"; 
+	final static String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	final static String DB_URL = "jdbc:mysql://us-cdbr-azure-west-c.cloudapp.net/acsm_c8854637e9312f5";
 	final static String USER = "b3a63fd5707ad7";
 	final static String PASS = "84fdf080";
-	boolean flag= true;
-	
+	boolean flag = true;
+
 	PreparedStatement stmt = null;
-	
-    public GameController() {
-        // TODO Auto-generated constructor stub
-    }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		// Set the response message's MIME type
-	     response.setContentType("text/html; charset=UTF-8");
-	     // Allocate a output writer to write the response message into the network socket
-	     PrintWriter out = response.getWriter();
-     	Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
-     	response.setContentType("application/json");
-	    response.setCharacterEncoding("UTF-8");
-		   JsonArray array = new JsonArray();
-
-
-		Connection conn = null;
-		   Statement stmt = null;
-		   try{
-			  //STEP 2: Register JDBC driver
-			  Class.forName(JDBC_DRIVER);
-
-			  //STEP 3: Open a connection
-			  System.out.println("Connecting to database...");
-			  conn = DriverManager.getConnection(DB_URL,USER,PASS);
-
-			  stmt = conn.createStatement();
-			  String sql;
-			  //sql = "INSERT INTO hello (msg1, msg2) VALUES ('She', 'Too');";
-			  //sql = "select * from question;";
-			  //stmt.executeUpdate(sql);
-			  
-			  //STEP 4: Execute a query
-			  //System.out.println("Creating statement...");
-			  //stmt = conn.createStatement();
-			  sql = "select * from question;";
-			  ResultSet rs1 = stmt.executeQuery(sql);
-
-			  while (rs1.next()) {
-		    	  JsonObject elem = new JsonObject();
-		    	  elem.addProperty("QuestionID", rs1.getString("QuestionID"));
-		    	  elem.addProperty("QuestionValue", rs1.getString("QuestionValue"));
-		    	  array.add(elem);
-		    	  //output = output + "<tr><td>"+rs1.getString("id")+"</td><td>"+rs1.getString("name")+"</td></tr>";
-		      }
-			  
-			  out.write(gson.toJson(array));
-			  
-			  //STEP 6: Clean-up environment
-			  rs1.close();
-			  stmt.close();
-			  conn.close();
-			  
-		   }catch(SQLException se){
-			  //Handle errors for JDBC
-			  se.printStackTrace();
-		   }catch(Exception e){
-			  //Handle errors for Class.forName
-			  e.printStackTrace();
-		   }finally{
-			  //finally block used to close resources
-			  try{
-				 if(stmt!=null)
-					stmt.close();
-			  }catch(SQLException se2){
-			  }// nothing we can do
-			  try{
-				 if(conn!=null) conn.close();
-			  }catch(SQLException se){
-				 se.printStackTrace();
-			  }//end finally try
-		   }//end try
-		// TODO Auto-generated method stub
-		/*response.getWriter().append("Served at: ").append(request.getContextPath());
-		
-		 PrintWriter out = response.getWriter();
-		 ArrayList<Question> questionList = new ArrayList<Question>();
-		 
-		 
-		 try {
-             Class.forName(JDBC_DRIVER);
-             System.out.println("Trying to connect");
-             Connection connection = DriverManager.getConnection(DB_URL,USER,PASS);
-             
-            out.println("Connection Established Successfull and the DATABASE NAME IS:"
-                     + connection.getMetaData().getDatabaseProductName());
-            System.out.println(connection.getMetaData().getDatabaseProductName());
-            String sql = "SELECT QuestionName FROM question";
-            stmt = connection.prepareStatement(sql);
-            
-            
-            ResultSet rs = stmt.executeQuery(sql);
-            int i = 1;
-            
-            while(rs.next()) {
-            	out.println("loop");
-            	Question question = new Question();
-            	ArrayList<String> list = new ArrayList<>();
-            	
-            	String QuestionName = rs.getString("QuestionName");
-            	out.println("Question " + i + " " +QuestionName);
-            	i++;
-            	question.setQuestionName(QuestionName);
-            	list.add(QuestionName);
-            	questionList.add(question);
-            	
-            	
-            }
-            rs.close();
-            connection.close();
-         } catch (Exception e) {
-        	 		out.println("Unable to make connection with DB");
-             e.printStackTrace();
-         }
-		 
-		 String check = request.getParameter("check");
-		 
-		 if(check.equals("1") && flag==true){
-			 
-			 HttpSession session = request.getSession();
-	         session.setAttribute("QuestionList", questionList.subList(0, 5));
-	         check = "2";
-	         session.setAttribute("check", check);
-	         RequestDispatcher rd = request.getRequestDispatcher("/Index.jsp");
-	         rd.forward(request, response);
-		 }
-		 //next set of questions
-		 else if(check.equals("2")){
-			 
-			 //flag=false;
-			 HttpSession session = request.getSession();
-			 check = "3";
-			 session.setAttribute("check", check);
-	         session.setAttribute("QuestionList", questionList.subList(5, 10));
-	         RequestDispatcher rd = request.getRequestDispatcher("/Index.jsp");
-	         rd.forward(request, response);
-		 }
-		 
-		 //game over; display spider chart
-		 else if(check.equals("3")){
-			 
-			 ArrayList<String> scores = new ArrayList<>();
-			 try {
-	             Class.forName(JDBC_DRIVER);
-	             System.out.println("Trying to connect");
-	             Connection connection = DriverManager.getConnection(DB_URL,USER,PASS);
-	             
-	            out.println("Connection Established Successfull and the DATABASE NAME IS:"
-	                     + connection.getMetaData().getDatabaseProductName());
-	            System.out.println(connection.getMetaData().getDatabaseProductName());
-	            
-	            
-	            String sql = "";	//query to get data about scores of models
-	            stmt = connection.prepareStatement(sql);
-	            
-	            
-	            ResultSet rs = stmt.executeQuery(sql);
-	            
-	            while(rs.next()) {
-	            	//add to arraylist 'scores'
-	            	
-	            	
-	            }
-	            rs.close();
-	            connection.close();
-	         } catch (Exception e) {
-	        	 		out.println("Unable to make connection with DB");
-	             e.printStackTrace();
-	         }
-			 
-			 HttpSession session = request.getSession();
-			 session.setAttribute("Modelvalues", scores);
-	         RequestDispatcher rd = request.getRequestDispatcher("/Chart.jsp");
-	         rd.forward(request, response);
-		 }*/
-		
+	public GameController() {
+		// TODO Auto-generated constructor stub
 	}
-	
+
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		// Set the response message's MIME type
+		// response.setContentType("text/html; charset=UTF-8");
+
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		JsonArray array = new JsonArray();
+
+		// Allocate a output writer to write the response message into the
+		// network socket
+
+		PrintWriter out = response.getWriter();
+
+		Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls()
+				.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
+
+		String fn = request.getParameter("fn");
+
+		/********* call login stored procedure **********/
+		if (fn.equals("1")) {
+			//JsonArray array1 = new JsonArray();
+			String username = request.getParameter("LANID");
+			String password = request.getParameter("pwd");
+
+			//array1 = aunthenticateLogin(username, password);
+			//System.out.println(gson.toJson(array1));
+			out.write(gson.toJson(aunthenticateLogin(username, password)));
+		}
+
+		
+		/*************** call new game stored procedure ***************/
+		else if (fn.equals("2")) {
+			String username = request.getParameter("LANID");
+			String gameName = request.getParameter("gameName");
+			String gameDesc = request.getParameter("gameDesc");
+			String qaArray = request.getParameter("QAArray");
+
+			out.write(gson.toJson(newGame(username, gameName, gameDesc, qaArray)));
+		}
+
+		
+		/************* save game instance ***********************/
+		else if (fn.equals("3")) {
+			String username = request.getParameter("LANID");
+			String gameName = request.getParameter("gameName");
+			String gameDesc = request.getParameter("gameDesc");
+			String gameId = request.getParameter("gameID");
+			String modelId = request.getParameter("cloudGuess");
+			String completed = request.getParameter("completed");
+			String betCoins = request.getParameter("bets[bet].text");
+			String netCoins = request.getParameter("playerCoins");
+			String clouds = request.getParameter("clouds"); //"1,1,100.1,2,200.1,3,30.1,4,400.1,5,50.1,6,60.";
+			String questions = request.getParameter("questions"); //"1|5|1|cool~2|4|1|~3|3|1|bad~4|2|1|I want cake.~5|1|1|Oden is good too.~";
+			
+			out.write(gson.toJson(saveGame(username,gameId, modelId, gameName, gameDesc, completed, betCoins, netCoins,
+					clouds, questions)));
+		}
+		
+		
+		/**************** load saved game ***************/
+		else if (fn.equals("4")) {
+			String username = request.getParameter("LANID");
+			String gameId = request.getParameter("gameID");
+			out.write(gson.toJson(loadGame(username, gameId)));
+		}
+
+	} // end of doGet
+
+	/***************** Authenticate login function ***********************/
+
+	private static JsonArray aunthenticateLogin(String username, String password) {
+		Connection conn = null;
+		CallableStatement cStmt = null;
+		JsonArray array = new JsonArray();
+		ResultSet rs1;
+
+		try {
+			Class.forName(JDBC_DRIVER);
+			System.out.println("Connecting to database...");
+			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls()
+					.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
+			System.out.println("stored proc" + username);
+
+			cStmt = conn.prepareCall("{CALL spLogin(?,?)}");
+			System.out.println(cStmt);
+			cStmt.setString(1, username);
+			cStmt.setString(2, password);
+
+			cStmt.execute();
+			rs1 = cStmt.getResultSet();
+
+			while (rs1.next()) {
+				JsonObject elem = new JsonObject();
+				elem.addProperty("gameID", rs1.getString("GameID"));
+				elem.addProperty("gameName", rs1.getString("GameName"));
+				elem.addProperty("gameDesc", rs1.getString("GameDescription"));
+				elem.addProperty("gameCompleted", rs1.getString("IsGameCompleted"));
+				elem.addProperty("coins", rs1.getString("Coins"));
+				array.add(elem);
+				//System.out.println(gson.toJson(elem));
+			}
+
+			rs1.close();
+			cStmt.close();
+			conn.close();
+			return array;
+
+		} catch (SQLException se) {
+			se.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (cStmt != null)
+					cStmt.close();
+			} catch (SQLException se2) {
+			}
+			try {
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	/*************** new game function ****************/
+
+	private static JsonArray newGame(String username, String gameName, String gameDesc, String qaArray) {
+		Connection conn = null;
+		CallableStatement cStmt = null;
+		JsonArray array = new JsonArray();
+		ResultSet rs1;
+
+		try {
+			Class.forName(JDBC_DRIVER);
+			System.out.println("Connecting to database...");
+			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls()
+					.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
+			System.out.println("stored proc" + username);
+
+			cStmt = conn.prepareCall("{CALL spNewGame(?,?,?,?)}");
+			System.out.println(cStmt);
+			cStmt.setString(1, username);
+			cStmt.setString(2, gameName);
+			cStmt.setString(3, gameDesc);
+			cStmt.setString(4, qaArray);
+
+			cStmt.execute();
+			rs1 = cStmt.getResultSet();
+
+			while (rs1.next()) {
+				JsonObject elem = new JsonObject();
+				elem.addProperty("QualityAttributeName", rs1.getString("QualityAttributeName"));
+				elem.addProperty("QuestionID", rs1.getString("QuestionID"));
+				elem.addProperty("QuestionValue", rs1.getString("QuestionValue"));
+				elem.addProperty("AnswerID", rs1.getString("AnswerID"));
+				elem.addProperty("AnswerValue", rs1.getString("AnswerValue"));
+				elem.addProperty("ModelID", rs1.getString("ModelID"));
+				elem.addProperty("ModelAnswerValue", rs1.getString("ModelAnswerValue"));
+				elem.addProperty("TipID", rs1.getString("TipID"));
+				elem.addProperty("TipName", rs1.getString("TipName"));
+				elem.addProperty("TipDescription", rs1.getString("TipDescription"));
+				elem.addProperty("TipQA", rs1.getString("TipQA"));
+				elem.addProperty("GameID", rs1.getString("GameID"));
+				array.add(elem);
+				// System.out.println(gson.toJson(elem));
+			}
+
+			rs1.close();
+			cStmt.close();
+			conn.close();
+			return array;
+
+		} catch (SQLException se) {
+			se.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (cStmt != null)
+					cStmt.close();
+			} catch (SQLException se2) {
+			}
+			try {
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	/**************** save game ****************/
+
+	private static JsonArray saveGame(String username, String gameId, String modelId, String gameName, String gameDesc,
+			String completed, String betCoins, String netCoins, String clouds, String questions) {
+		Connection conn = null;
+		CallableStatement cStmt = null;
+		JsonArray array = new JsonArray();
+		ResultSet rs1;
+
+		try {
+			Class.forName(JDBC_DRIVER);
+			System.out.println("Connecting to database...");
+			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls()
+					.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
+			System.out.println("stored proc" + username);
+
+			cStmt = conn.prepareCall("{CALL spSaveGame(?,?,?,?,?,?,?,?)}");
+			System.out.println(cStmt);
+			cStmt.setString(1, username);
+			cStmt.setInt(2, Integer.parseInt(gameId));
+			cStmt.setInt(3, Integer.parseInt(modelId));
+			cStmt.setInt(4, Integer.parseInt(completed));
+			cStmt.setInt(5, Integer.parseInt(betCoins));
+			cStmt.setInt(6, Integer.parseInt(netCoins));
+			cStmt.setString(7, clouds);
+			cStmt.setString(8, questions);
+			cStmt.registerOutParameter("outid", java.sql.Types.INTEGER);
+
+			cStmt.execute();
+			
+			JsonObject elem = new JsonObject();
+			elem.addProperty("reviewID", cStmt.getInt(9));
+			array.add(elem);
+			
+			//rs1.close();
+			cStmt.close();
+			conn.close();
+			return array;
+
+		} catch (SQLException se) {
+			se.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (cStmt != null)
+					cStmt.close();
+			} catch (SQLException se2) {
+			}
+			try {
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	/************** load saved game ***********/
+
+	private static JsonArray loadGame(String username, String gameid) {
+		Connection conn = null;
+		CallableStatement cStmt = null;
+		JsonArray array = new JsonArray();
+		ResultSet rs1;
+
+		try {
+			Class.forName(JDBC_DRIVER);
+			System.out.println("Connecting to database...");
+			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls()
+					.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
+			System.out.println("stored proc" + username);
+
+			cStmt = conn.prepareCall("{CALL spLoadGame(?,?)}");
+			System.out.println(cStmt);
+			cStmt.setString(1, username);
+			cStmt.setInt(2, Integer.parseInt(gameid));
+
+			cStmt.execute();
+			rs1 = cStmt.getResultSet();
+
+			while (rs1.next()) {
+				JsonObject elem = new JsonObject();
+				elem.addProperty("GameID", rs1.getString("GameID"));
+				elem.addProperty("GameName", rs1.getString("GameName"));
+				elem.addProperty("CloudModelID", rs1.getString("CloudModelID"));
+				elem.addProperty("ModelBettingCoins", rs1.getString("ModelBettingCoins"));
+				elem.addProperty("netcoins", rs1.getString("netcoins"));
+				elem.addProperty("ModelId", rs1.getString("ModelId"));
+				elem.addProperty("QualityAttributeID", rs1.getString("QualityAttributeID"));
+				elem.addProperty("cloudScore", rs1.getString("cloudScore"));
+				elem.addProperty("QuestionID", rs1.getString("QuestionID"));
+				elem.addProperty("theAnswer", rs1.getString("theAnswer"));
+				elem.addProperty("UserNotes", rs1.getString("UserNotes"));
+				elem.addProperty("QuestionAsked", rs1.getString("QuestionAsked"));
+				elem.addProperty("QuestionValue", rs1.getString("QuestionValue"));
+				elem.addProperty("AnswerID", rs1.getString("AnswerID"));
+				elem.addProperty("AnswerValue", rs1.getString("AnswerValue"));
+				elem.addProperty("ModelID", rs1.getString("ModelID"));
+				elem.addProperty("ModelAnswerValue", rs1.getString("ModelAnswerValue"));
+				elem.addProperty("QualityAttributeName", rs1.getString("QualityAttributeName"));
+				elem.addProperty("TipID", rs1.getString("TipID"));
+				elem.addProperty("TipName", rs1.getString("TipName"));
+				elem.addProperty("TipDescription", rs1.getString("TipDescription"));
+				elem.addProperty("TipQA", rs1.getString("TipQA"));
+				array.add(elem);
+				// System.out.println(gson.toJson(elem));
+			}
+
+			rs1.close();
+			cStmt.close();
+			conn.close();
+			return array;
+
+		} catch (SQLException se) {
+			se.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (cStmt != null)
+					cStmt.close();
+			} catch (SQLException se2) {
+			}
+			try {
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
