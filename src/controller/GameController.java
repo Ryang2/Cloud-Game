@@ -45,12 +45,14 @@ public class GameController extends HttpServlet {
 
 		// Set the response message's MIME type
 		// response.setContentType("text/html; charset=UTF-8");
+		
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		JsonArray array = new JsonArray();
 
 		// Allocate a output writer to write the response message into the
 		// network socket
+		
 		PrintWriter out = response.getWriter();
 		
 		Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls()
