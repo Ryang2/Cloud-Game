@@ -7,6 +7,8 @@ var modelBet = -1; // index of cloudList, the cloud user bets on
 var playerCoins = 100; // Coins kept track in the game
 var user;
 var playerStartingCoins = 100;
+var loadingGame = false; 
+var tempData;
 
 angular.module('GameApp', {}) 
 .controller('dataController', function($scope, $sce) {
@@ -18,10 +20,43 @@ angular.module('GameApp', {})
     }
 	$scope.filteredGames = tempArray;*/
 	$scope.filteredGames = $.parseJSON(sessionStorage.getItem('games'));
+	sessionStorage.setItem('games', null);
     console.log($scope.filteredGames);
     $scope.sortCol = 'rank';
     $scope.sortReverse = false;
     //$scope.$apply();
+    $scope.loadGamesData = function() {
+        if ($scope.filteredGames == null) {
+        	if(user == null || tempData == null){
+        		window.location = "login.html";
+        	}
+        	var gamesData = [];
+        	var credentials = {
+					fn : 1,
+					LANID: user,
+					pwd: tempData
+			};
+			$.post("/game1.1/gameController", credentials, function(list) {
+				console.log(list);
+				if(list != null){
+					if(list.length > 0){
+					 	$.each(list, function(index, data) {
+					 		if(data.gameID != null){
+					 			gamesData.push(new gameInstance(data.gameID, data.gameName, data.gameDesc, data.gameCompleted));
+					 		}
+						});
+					 	$scope.filteredGames = gamesData;
+					 	$scope.$apply();
+					} else {
+						window.location = "login.html";
+					}
+				} else {
+					alert("Unable to load your games. The database is busy.");
+				}
+			});
+        }
+    }
+    $scope.loadGamesData();
     $scope.sortBy = function(colName) { 
         if ($scope.sortCol == colName) {
             $scope.sortReverse = !$scope.sortReverse;
@@ -30,8 +65,12 @@ angular.module('GameApp', {})
         }
         $scope.sortCol = colName;
     }
+    $scope.isLoading = function() {
+    	 if(loadingGame) {return true;}return false;
+    };
     $scope.selectGame = function(gameID) { 
         //console.log(gameID);
+        loadingGame = true;
         var gameInfo = {
         		fn : 4,
         		LANID: user,
@@ -91,31 +130,36 @@ angular.module('GameApp', {})
 				modelBet = list[0].CloudModelID;
 				bet = list[0].ModelBettingCoins;
 				console.log(playerStartingCoins);
-				playerCoins = list[0].netcoins; // TODO: Coins tracking needs to be revamped
+				playerCoins = list[0].netcoins;
 				console.log(gameName);
 				console.log(modelBet);
 				console.log(bet);
 				console.log(playerCoins);
 				for(var i = 0; i < quesData.length; i++){
-					if(QAArray.indexOf(""+(QAIDList.indexOf(quesData[i].QAName)+1)) == -1){QAArray.push(""+(QAIDList.indexOf(quesData[i].QAName)+1))} //TODO NEW GAME DOESN'T ORDER!
+					if(QAArray.indexOf(""+(QAIDList.indexOf(quesData[i].QAName)+1)) == -1){QAArray.push(""+(QAIDList.indexOf(quesData[i].QAName)+1))}
 				}
 				console.log(quesData);
 				console.log(cloudData);
 				console.log(tipsData);
 				console.log(QAArray);
-				prepGame(quesData, tipsData, cloudData); //Or some sort of function that loads in the data TODO sort the questions by whether it's asked or not and filter it
+				prepGame(quesData, tipsData, cloudData);
 				setActiveStyleSheet('QA');
 				$("#titlePic").css("display", "none");
 				$("#EChoose").css("display", "none");
 				$("#game").css("display", "");
+				loadingGame = false;
         	} else {
         		alert("The database is busy, try again later.");
+        		loadingGame = false;
         	}
         });
     }
     $('#NQASubmit').click(function() {
+    	var input = this;
+        input.disabled = true;
 		if(QAArray.length == 0){
 			alert("Please select at least one quality attribute before beginning the game.");
+			input.disabled = false;
 		} else {
 			var QAString = "";
 			for(var i = 0; i < QAArray.length; i++){QAString+=QAArray[i]+",";}
@@ -170,26 +214,39 @@ angular.module('GameApp', {})
 					$("#game").css("display", "");
 					console.log(quesData);
 					console.log(tipsData);
-					$scope.filteredGames.push(new gameInstance(""+GameID, gameName, gameDescription, "0"));
-					$scope.$apply();
-					//console.log($scope.filteredGames);
-					sessionStorage.setItem('games', JSON.stringify($scope.filteredGames));
+					input.disabled = false;
 				} else {
 					alert("The database is busy, try again later.");
+					input.disabled = false;
 				}
 			});
 		}
+	});
+    $('#existingGame').click(function() {
+		$("#NorE").css("display", "none");
+		if($scope.filteredGames.length == 0){
+			$("#table").css("display", "none");
+			$("#noneFound").css("display", "");
+		} else {
+			$("#table").css("display", "");
+			$("#noneFound").css("display", "none");
+		}
+		$("#EChoose").css("display", "");
 	});
 });
 
 $(document).ready(function(){
 	setActiveStyleSheet("NE");
 	user = sessionStorage.getItem('user');
+	tempData = sessionStorage.getItem('tempData');
+	console.log(user);
+	$('#welcomeTitle').html("<h2>Welcome, "+user+"!</h2>");
+	$("#welcomeTitle").css("display", "");
 	playerStartingCoins = sessionStorage.getItem('coins');
 	console.log(playerStartingCoins);
 	if(playerStartingCoins == null){
 		playerStartingCoins = 0;
-		console.log(playerStartingCoins);
+		//console.log(playerStartingCoins);
 	}
 	//$scope.filteredGames = $.parseJSON(sessionStorage.getItem('games')); scope is not defined! make a function in controller that does this for you?
 	//$scope.$apply();
@@ -198,11 +255,6 @@ $(document).ready(function(){
 		$("#NorE").css("display", "none");
 		$("#NName").css("display", "");
 	});
-	$('#existingGame').click(function() {
-		$("#NorE").css("display", "none");
-		$("#EChoose").css("display", "");
-	});
-	
 	$('#NNameSumbit').click(function() {
 		gameName = document.getElementById('gameName').value;
 		gameDescription = document.getElementById('gameDes').value;
