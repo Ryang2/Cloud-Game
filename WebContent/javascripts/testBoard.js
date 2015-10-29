@@ -5,7 +5,7 @@ var context;
 var CANVAS_WIDTH = 1440;
 var CANVAS_HEIGHT = 1200;
 var mode = 4; // 0: normal, 1: help, 2: before event, 3: during event, 4: pregame help, 5: pregame select bet, 
-			  // 6: facts/tips display screen, 7: news display screen (if needed), 8: guess the cloud, 9: game over, 10 menu, 11 onLoad
+			  // 6: facts/tips display screen, 7: news display screen (if needed), 8: guess the cloud, 9: game over, 10 menu, 11 onLoad, 12 onLoad completeGame, 13 onLoad beforeStart
 var playerStartingCoins = 0; // The amount of coins the user has before starting the game
 var playerCoins = 0; // Coins kept track in the game
 //var bet = -1; // index of bets array
@@ -21,8 +21,8 @@ var MAX_BONUS_SQUARES = 8;
 var showBonus = 0; // The number of turns bonus squares are drawn on the board ("Show Bonus Squares" event)
 var bonusCount = 0; // Keeps track of the # bonus squares that are landed on in a turn
 //var lowEvents = ["Facts and Tips", "Current News", "Show Bonus Squares", "Guess Which Cloud is First", "Get Coins"]; // News is not in DB yet
-var lowEvents = ["Facts and Tips", "Show Bonus Squares", "Guess Which Cloud is First", "Get Coins"];
-//var lowEvents = ["Change Your Bet", "Change Your Bet"]; 
+//var lowEvents = ["Facts and Tips", "Show Bonus Squares", "Guess Which Cloud is First", "Get Coins"];
+var lowEvents = ["Facts and Tips", "Facts and Tips"]; 
 var midEvents = ["Guess Which Cloud is First", "Change Your Bet", "Get Coins"];
 var lastEvent = "none";
 //var newsArray = ["A cloud just walked into a bar. It dissolved into precipitation.", "Three clouds were seen suspiciously loitering around a tobacco store.", "Prince Cumulus and Princess Cirrostratus have set their wedding day to July of 2016."];
@@ -411,7 +411,7 @@ function draw(moveData, isMoving) {
 			drawSquares();
 			// Draw the game pieces
 			drawPieces();
-			if(moveData != null){
+			if(moveData != null && mode != 13){
 				drawSigns(moveData);
 			}
 			if(isMoving){
@@ -423,8 +423,10 @@ function draw(moveData, isMoving) {
 				openHelpMenu(1);
 			} else if(mode == 5){
 				openBetMenu(0);
-			} else if(mode == 11){
+			} else if(mode == 11 || mode == 13){
 				openHelpMenu(1);
+			} else if(mode == 12){
+				openEndMenu();
 			}
 		};
 	};
@@ -588,7 +590,7 @@ function openHelpMenu(type){ // If type is 1, show the normal help menu, else sh
 	dimOut.draw();
 	helpBG.draw();
 	if(type == 1){
-		if(mode == 11){welcomeText1.text = "Welcome Back to Cloud Race!";}else{welcomeText1.text = "Welcome to Cloud Race!";}
+		if(mode == 11 || mode == 13){welcomeText1.text = "Welcome Back to Cloud Race!";}else{welcomeText1.text = "Welcome to Cloud Race!";}
 		helpText1.text = helpDesc01;
 		welcomeText1.color = "#d3d3d3";
 		welcomeText1.font = "bold 48px sans-serif"
@@ -602,7 +604,7 @@ function openHelpMenu(type){ // If type is 1, show the normal help menu, else sh
 		helpText1.drawWrap(34);
 	}
 	context.textAlign="center";
-	if(mode == 4 || mode == 11 || type == 2){
+	if(mode == 4 || mode == 11 || mode == 13 || type == 2){
 		welcomeText1.draw();
 	}
 	helpTextEnd.draw();
@@ -653,11 +655,11 @@ function openBetMenu(type){
 	}
 	betButton.text = "Confirm";
 	betButton.drawResize(false);
-	if(lastEvent == "none" && playerCoins+playerStartingCoins < 10){
+	if(lastEvent == "none" && parseInt(playerCoins)+parseInt(playerStartingCoins) < 10){
 		playerCoins = 10;
-		betText2.text = "Your Coins: "+playerCoins
 		alert("You're a bit poor, so we gave you some coins.");
 	}
+	betText2.text = "Your Coins: "+(parseInt(playerCoins)+parseInt(playerStartingCoins));
 	betText2.drawResize(false);
 	context.textAlign="left";
 }
@@ -668,7 +670,7 @@ function openTextMenu(type){
 			console.log(tipsArray);
 			console.log(QList[curQues-1].QA);
 			console.log(tipsArray[0].QA);
-			while(num < QList.length && QList[curQues-1].QA != tipsArray[num].QA && tipsArray[num].QA != "None"){
+			while(num < tipsArray.length && QList[curQues-1].QA != tipsArray[num].QA && tipsArray[num].QA != "None"){
 				console.log(QList[curQues-1].QA);
 				console.log(tipsArray[num].QA);
 				num += 1;
@@ -790,7 +792,9 @@ function openEndMenu(){
 	bonusText1.drawResize();
 	drawPieces();
 	context.textAlign="left";
-	saveGame();
+	if(mode != 12){
+		saveGame();
+	}
 	// TODO close tab warning if not finished saving
 }
 function openMainMenu(){
@@ -871,6 +875,15 @@ function makeMove(array){ // TODO: character limit?
 }
 //$(document).ready(function() {
 function prepGame(qQues, qTips, qClouds){ // Function to run when starting the game.
+	window.onbeforeunload = function(event) {
+		console.log(qString);
+		console.log(currentSave);
+		if(currentSave < qString.length && qString[currentSave] != ""){
+			emergencySaveGame();
+		    event.returnValue = "Please wait until the game is done saving.";
+		}
+	};
+	
 	canvas = document.getElementById("interface");
 	context = canvas.getContext('2d');
 	
@@ -919,6 +932,8 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 		draw(null, false); // Draw the board, not including the signs
 	} else {
 		var tempList = qClouds.slice();
+		var scoreTrack = 0;
+		//console.log(qClouds);
 		for(var i = 0; i < 6; i++){
 			pieces.push(new piece(pieceNames[i], 0, 0, "bcs-"+pieceNames[i], pieceColors[i].red, pieceColors[i].green, pieceColors[i].blue));
 			for(var k in QAArray){ // Initialize scores array for each cloud
@@ -928,24 +943,41 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 			var num = Math.floor(Math.random() * tempList.length);
 			pieces[pieces.length-1].cloud = cloudList[tempList[num].ModelID-1]; // cloud qascore, score location
 			pieces[pieces.length-1].QAScores = tempList[num].ModelAnswerValue.slice();
+			//console.log(tempList[num].ModelAnswerValue.slice());
+			//console.log(pieces[pieces.length-1].QAScores);
 			var tempscore = 0; for(var o = 0; o < pieces[pieces.length-1].QAScores.length; o++){tempscore+=parseInt(pieces[pieces.length-1].QAScores[o]);}
 			pieces[pieces.length-1].score = tempscore;
-			var temploc = tempscore%31;
-			console.log(temploc);
+			scoreTrack += tempscore;
+			if(tempscore%31 != 0){
+				var temploc = tempscore%31;
+			} else {
+				var temploc = 1;
+			}
+			//console.log(temploc);
 			pieces[pieces.length-1].loc = temploc;
 			tempList.splice(num, 1);
 		}
-		boardSpaces[0].occupants.length = 0;
-		mode = 11;
-		makeMove([0, 0, 0, 0, 0, 0]);
-		for(var l = 0; l < bets.length; l++){if(bets[l].text = ""+bet){bet = l;break;}}
-		if(modelBet > -1){
+		if(QList.length > 0){
+			mode = 11;
+		} else {
+			mode = 12;
+		}
+		if(scoreTrack > 0){
+			boardSpaces[0].occupants.length = 0;
+			makeMove([0, 0, 0, 0, 0, 0]);
+		} else {
+			mode = 13;
+			makeMove([0, 0, 0, 0, 0, 0]);
+		}
+		for(var l = 0; l < bets.length; l++){if(bets[l].text == ""+bet){bet = l;break;}}
+		if(modelBet > -1 && bet > -1 && bet < 4){
 			clouds[modelBet].color = "#001d87";
 			clouds[modelBet].fontColor = "#FFFFFF";
-		}
-		if(bet > -1){
 			bets[bet].color = "#001d87";
 			bets[bet].fontColor = "#FFFFFF";
+		} else {
+			modelBet = -1;
+			bet = -1;
 		}
 	}
 	
@@ -985,7 +1017,7 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	    		bonusText3.draw();
 	    		context.textAlign = "left";
 	    	}
-	    } else if(mode == 9){
+	    } else if(mode == 9 || mode == 12){
 	    	var hover = false;
 	    	for(var i in pieces){
 	    		if(pieces[i].clicked(mousePos.x, mousePos.y)){
@@ -1075,15 +1107,19 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	        		mode = 5;
 	        		draw(positions, false);
 	        	} else {
-	        		playerCoins += bonusCount * 10;
-	        		alert("You gained "+bonusCount * 10+" coins!")
+	        		console.log(playerCoins);
+	        		playerCoins = parseInt(playerCoins) + bonusCount * 10;
+	        		alert("You gained "+bonusCount * 10+" coins!");
+	        		console.log(playerCoins);
 	        		mode = 0;
 	        		draw(positions, false);
 	        	}
 	    	} else {
 	    		if(eventLeft.clicked(mousePos.x, mousePos.y, true)){
-	    			playerCoins += bonusCount * 10;
-	        		alert("You gained "+bonusCount * 10+" coins!")
+	    			console.log(playerCoins);
+	    			playerCoins = parseInt(playerCoins) + bonusCount * 10;
+	        		alert("You gained "+bonusCount * 10+" coins!");
+	        		console.log(playerCoins);
 	        		mode = 0;
 	        		draw(positions, false);
 	        	} else if(eventRight.clicked(mousePos.x, mousePos.y, true)){
@@ -1124,15 +1160,15 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	    		}
 	    		for(var j in bets){
 	    			if(bets[j].clicked(mousePos.x, mousePos.y, true)){
-	    				if((bet != -1 && parseInt(bets[j].text) <= playerCoins+playerStartingCoins + parseInt(bets[bet].text)) ||
-	    						(bet == -1 && parseInt(bets[j].text) <= playerCoins+playerStartingCoins)){
+	    				if((bet != -1 && parseInt(bets[j].text) <= (parseInt(playerCoins)+parseInt(playerStartingCoins)) + parseInt(bets[bet].text)) ||
+	    						(bet == -1 && parseInt(bets[j].text) <= (parseInt(playerCoins)+parseInt(playerStartingCoins)))){
 		    				if(bet != -1){
 		    					bets[bet].color = "#FFFFFF";
 		    					bets[bet].fontColor = "#001d87";
 		        				context.textAlign = "center";
 		        				bets[bet].drawResize(true);
 		        				context.textAlign = "left";
-		        				playerCoins += parseInt(bets[bet].text); 
+		        				playerCoins = parseInt(playerCoins) + parseInt(bets[bet].text); 
 		    				}
 		    				if(bet != j){
 		    					bets[j].color = "#001d87";
@@ -1141,7 +1177,7 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 		        				bets[j].drawResize(true);
 		        				context.textAlign = "left";
 		        				bet = j;
-		        				playerCoins -= parseInt(bets[bet].text); 
+		        				playerCoins = parseInt(playerCoins) - parseInt(bets[bet].text); 
 		        				betText2.text = "Your Coins: "+(parseInt(playerCoins)+parseInt(playerStartingCoins));
 		        				context.fillStyle="#c2dcd6";
 		        	    		context.fillRect(710, 730, 500, 50);
@@ -1160,6 +1196,14 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 		    					break;
 		    				}
 	    				} else {
+	    					if(bet != -1){
+	    						console.log("bet: "+bets[j].text+" <= "+((parseInt(playerCoins)+parseInt(playerStartingCoins)) + parseInt(bets[bet].text)));
+	    					} else {
+	    						console.log("no bet : "+bets[j].text+" <= "+(parseInt(playerCoins)+parseInt(playerStartingCoins)));
+
+	    					}
+	    					console.log(playerCoins);
+	    					console.log(playerStartingCoins);
 	    					alert("Sorry! You don't have enough coins for that bet.");
 	    					break;
 	    				}
@@ -1219,8 +1263,10 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	    			} else {
 	    				console.log(positions[0].piece.cloud+" is equal to "+clouds[cloudGuess].text+"?");
 	    				if(positions[0].piece.cloud === clouds[cloudGuess].text){
+	    					console.log(playerCoins);
 	    					alert("Congratulations! The "+positions[0].piece.name+"-colored piece represents "+positions[0].piece.cloud+"! You gained 50 coins!");
-	    					playerCoins += 50;
+	    					playerCoins = parseInt(playerCoins) + 50;
+	    					console.log(playerCoins);
 	    				} else {
 	    					alert("Sorry! The "+positions[0].piece.name+"-colored piece actually represents "+positions[0].piece.cloud+".");
 	    				}
@@ -1238,7 +1284,7 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	    } else if(mode == 9){
 	    	if(ween){
 	    		var reward = parseInt(bets[bet].text)*2
-	    		playerCoins += reward;
+	    		playerCoins = parseInt(playerCoins) + reward;
 	    		alert("You've won the bet! You gained "+reward+" coins and now have "+(parseInt(playerCoins)+parseInt(playerStartingCoins))+" coins.");
 	    	}
 	    	for(var i = 0; i < QAArray.length; i++){
@@ -1270,6 +1316,25 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	    } else if(mode == 11){
 	    	mode = 0;
 	    	draw(positions, false);
+	    } else if(mode == 12){
+	    	for(var i = 0; i < QAArray.length; i++){
+	    		if(QAIDList[QAArray[i]-1] != null){
+	    			QAArray[i] = QAIDList[QAArray[i]-1];
+	    		}
+	    	}
+	    	sessionStorage.setItem('QA', JSON.stringify(QAArray));
+	    	sessionStorage.setItem('pieces', JSON.stringify(pieces));
+	    	//AList.push.apply(AList, QList);
+	    	sessionStorage.setItem('QList', JSON.stringify(AList));
+	    	window.location = "SpiderChart.html"
+	    } else if(mode == 13){
+	    	if(bet == -1){
+	    		mode = 5;
+		    	draw(null, false);
+	    	} else {
+		    	mode = 0;
+		    	draw(null, false);
+	    	}
 	    }
 	 });
 }
@@ -1415,55 +1480,38 @@ function saveGame(){
 	//'1,1,10.' Around 180 characters (6 clouds and 6 QAs) // TODO check if there's anything that actually needes to be saved
 	//QAID, cloudID, score
 	var tempCS = "";
+	console.log(QAArray);
 	for(var i = 0, len = pieces.length; i < len; i++){
-		for(var j = 0, len = pieces[i].QAScores.length; j < len; j++){
-			tempCS += QAIDList.indexOf(QAArray[j])+","+cloudList.indexOf(pieces[i].cloud)+","+pieces[i].QAScores[j]+".";
+		for(var j = 0, len2 = pieces[i].QAScores.length; j < len2; j++){
+			tempCS += QAArray[j]+","+(cloudList.indexOf(pieces[i].cloud)+1)+","+pieces[i].QAScores[j]+".";
 		}
 	}
 	cloudString[cloudString.length-1] = tempCS;
 	//'1|5|1|cool~' Around 7+comment characters per question, we can allow 29 character comments assuming max length is 180 and we save every 5 questions
 	//#quesID, ansID (if answered), isAnswered, userNotes
-	/*var qString = ""; // TODO Check if ~ or | is in user notes? 
-	for(var i = 0, len = QList.length; i < len; i++){
-		if(!QList[i].saved){
-			qString += QList[i].id+"|"+QList[i].choice+"|";
-			if(QList[i].answered){
-				qString += "1|";
-			} else {
-				qString += "0|";
-			}
-			qString += QList[i].comment+"~";
-			QList[i].saved = true;
-		}
-	}*/
-	
 	cloudString.push("");
 	qString.push("");
 	console.log(cloudString);
 	console.log(qString);
-	/*"LANID");
-			String gameName = request.getParameter("gameName");
-			String gameDesc = request.getParameter("gameDesc");
-			String gameId = request.getParameter("gameID");
-			String modelId = request.getParameter("cloudGuess");
-			String completed = request.getParameter("completed");
-			String betCoins = request.getParameter("bets[bet].text");
-			String netCoins = request.getParameter("playerCoins");
-			String clouds = request.getParameter("clouds"); //"1,1,100.1,2,200.1,3,30.1,4,400.1,5,50.1,6,60.";
-			String questions = request.getParameter("questions"
-	 * var gameInfo = { // Maybe autosave every X questions?
-		function : ??,
-		LanID: user,
-		GameID: GameID,
-		inModelID: modelBet,
-		IsGameCompleted : QAArray,
-		ModelBettingCoins : bet,
-		NetCoins : playerStartingCoins-playerCoins,
-		Clouds : cloudString[currentSave],
-		Qs : qString[currentSave]
+	console.log(playerCoins);
+	var gameInfo = {
+		fn : 3,
+		LANID: user,
+		gameID: GameID,
+		cloudGuess: modelBet,
+		completed : 0,
+		betCoins : parseInt(bets[bet].text),
+		playerCoins : playerCoins,
+		clouds : cloudString[currentSave],
+		questions : qString[currentSave]
 	};
+	if(mode == 9){
+		gameInfo.completed = 1;
+	}
+	console.log(gameInfo);
 	$.post("/game1.1/gameController", gameInfo, function(list) {
-		if(data != null){ //GameID
+		console.log(list);
+		if(list != null){
 			currentSave += 1;
 			if(mode == 9 && currentSave < qString.length){
 				emergencySaveGame();
@@ -1474,25 +1522,36 @@ function saveGame(){
 				emergencySaveGame();
 			}
 		}
-	}*/
+	});
 }
 
 function emergencySaveGame(){ // In case the DB doesn't respond, we want to save all the data in our save arrays at once TODO: prevent the user from closing the tab until save is finished
-	/*var gameInfo = { 
-		function : ??,
-		LanID: user,
-		GameID: GameID,
-		inModelID: modelBet,
-		IsGameCompleted : QAArray,
-		ModelBettingCoins : bet,
-		NetCoins : playerStartingCoins-playerCoins,
-		Clouds : cloudString[currentSave],
-		Qs : qString[currentSave]
+	var tempCS = "";
+	for(var i = 0, len = pieces.length; i < len; i++){
+		for(var j = 0, len2 = pieces[i].QAScores.length; j < len2; j++){
+			tempCS += QAArray[j]+","+(cloudList.indexOf(pieces[i].cloud)+1)+","+pieces[i].QAScores[j]+".";
+		}
+	}
+	cloudString[cloudString.length-1] = tempCS;
+	var gameInfo = {
+		fn : 3,
+		LANID: user,
+		gameID: GameID,
+		cloudGuess: modelBet,
+		completed : 0,
+		betCoins : parseInt(bets[bet].text),
+		playerCoins : playerCoins,
+		clouds : cloudString[currentSave],
+		questions : qString[currentSave]
 	};
+	if(mode == 9){
+		gameInfo.completed = 1;
+	}
+	console.log(gameInfo);
 	$.post("/game1.1/gameController", gameInfo, function(list) {
-		if(data != null){ //GameID
+		if(list != null){ 
 			currentSave += 1;
-			if(currentSave < qString.length){
+			if(currentSave < qString.length && qString[currentSave+1] == ""){
 				emergencySaveGame();
 			} else {
 				alert("Saving is finished. You may now close this tab.");
@@ -1501,7 +1560,7 @@ function emergencySaveGame(){ // In case the DB doesn't respond, we want to save
 			console.log("Failed to emergency save game instance "+currentSave+".");
 			emergencySaveGame();
 		}
-	}*/
+	});
 }
 
 function shuffle(array) {

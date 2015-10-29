@@ -35,6 +35,8 @@
 		<br>
 		<br>
 		<span id="NorE" class="spaces" >
+			<span id="welcomeTitle" style="display:none;"><h2>What do you want to do today, </h2></span>
+			</br></br></br></br>
 			<label><button id="newGame" type= "New" class="btn btn-default btn-lg" style= "margin-right:15%">New Project</button></label>
 			<label><button id="existingGame" type= "Existing" class="btn btn-default btn-lg" style= "margin-left:30%">Existing Project</button></label>
 		</span>
@@ -99,14 +101,17 @@
 						</tr>
 					</thead>
 		   	 		<tbody>
-		  	 	    	<tr ng-repeat="row in games = (filteredGames | filter : {title: searchString} | orderBy : sortCol : sortReverse)"> 
+		  	 	    	<tr ng-repeat="row in games = (filteredGames | filter : {title: searchString} | orderBy : sortCol : sortReverse) track by $index"> 
 							<td id="name">{{row.name}}</td>
 							<td id="description">{{row.des}}</td>
 							<td id="completed">{{row.completed}}</td>
-							<td id="select"><button name="submit" id=ESelect{{row.id}} class="btn btn-default" value={{row.id}} ng-click="selectGame(row.id)">Select</button></td>
+							<td id="select"><button name="submit" id=ESelect{{row.id}} class="btn btn-default" value={{row.id}} ng-disabled="isLoading()" ng-click="selectGame(row.id)">Select</button></td>
 			    		</tr> 
 			    	</tbody> 
 				</table> 
+				<span id="noneFound" style="display:none;"><h3>It seems you haven't played any games yet. Press the back button and start a new project!</h3>
+					</br></br></br></br></br>
+				</span>
 				<div>
 					<button name="back" id="ECBack" class="btn btn-default" >Back</button>
 				</div>
@@ -118,13 +123,17 @@
 				<p id="msg"></p>
 			</div>
 			<figure>
-				<div id="app">
-					 <canvas name="game" id="interface" width="1440" height="1200" style="border:1px dotted;"></canvas>
+				<div style="width: 100%; overflow: hidden;">
+					<div id="app" style="float: left;">
+						 <canvas name="game" id="interface" width="1440" height="1200" style="border:1px dotted;"></canvas>
+					</div>
+					<div style="margin-left: 1480px;">
+						</br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
+						<p class="FGText">Add additional comments for questions here. Please do not use the characters "~" and "|". Max characters is currently 75.</p>
+						<input type="text"  id="userComments" maxlength="75" size="35">
+					</div>
 				</div>
 			</figure>
-			<p class="FGText">Add additional comments for questions here. Please do not use the characters "~" and "|". Max characters is currently 50.</p>
-			<input type="text"  id="userComments" maxlength="50" size="35">
-			</br>
 			<div class="FGText">This game used icons by <a href="http://www.freepik.com" title="Freepik">Freepik</a> and <a href="http://www.typicons.com" title="Stephen Hutchings">Stephen Hutchings</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> are licensed under <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
 		</div>
 		

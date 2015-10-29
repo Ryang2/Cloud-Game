@@ -86,20 +86,18 @@ public class GameController extends HttpServlet {
 		/************* save game instance ***********************/
 		else if (fn.equals("3")) {
 			String username = request.getParameter("LANID");
-			String gameName = request.getParameter("gameName");
-			String gameDesc = request.getParameter("gameDesc");
 			String gameId = request.getParameter("gameID");
 			String modelId = request.getParameter("cloudGuess");
 			String completed = request.getParameter("completed");
-			String betCoins = request.getParameter("bets[bet].text");
+			String betCoins = request.getParameter("betCoins");
 			String netCoins = request.getParameter("playerCoins");
 			String clouds = request.getParameter("clouds"); //"1,1,100.1,2,200.1,3,30.1,4,400.1,5,50.1,6,60.";
 			String questions = request.getParameter("questions"); //"1|5|1|cool~2|4|1|~3|3|1|bad~4|2|1|I want cake.~5|1|1|Oden is good too.~";
 			
-			out.write(gson.toJson(saveGame(username,gameId, modelId, gameName, gameDesc, completed, betCoins, netCoins,
+			out.write(gson.toJson(saveGame(username,gameId, modelId, completed, betCoins, netCoins,
 					clouds, questions)));
 		}
-		
+
 		
 		/**************** load saved game ***************/
 		else if (fn.equals("4")) {
@@ -242,8 +240,7 @@ public class GameController extends HttpServlet {
 	}
 
 	/**************** save game ****************/
-
-	private static JsonArray saveGame(String username, String gameId, String modelId, String gameName, String gameDesc,
+	private static JsonArray saveGame(String username, String gameId, String modelId,
 			String completed, String betCoins, String netCoins, String clouds, String questions) {
 		Connection conn = null;
 		CallableStatement cStmt = null;
@@ -258,7 +255,7 @@ public class GameController extends HttpServlet {
 					.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
 			System.out.println("stored proc" + username);
 
-			cStmt = conn.prepareCall("{CALL spSaveGame(?,?,?,?,?,?,?,?)}");
+			cStmt = conn.prepareCall("{CALL spSaveGame(?,?,?,?,?,?,?,?,?)}");
 			System.out.println(cStmt);
 			cStmt.setString(1, username);
 			cStmt.setInt(2, Integer.parseInt(gameId));
@@ -268,8 +265,7 @@ public class GameController extends HttpServlet {
 			cStmt.setInt(6, Integer.parseInt(netCoins));
 			cStmt.setString(7, clouds);
 			cStmt.setString(8, questions);
-			cStmt.registerOutParameter("outid", java.sql.Types.INTEGER);
-
+			cStmt.registerOutParameter("outID", java.sql.Types.INTEGER);
 			cStmt.execute();
 			
 			JsonObject elem = new JsonObject();
