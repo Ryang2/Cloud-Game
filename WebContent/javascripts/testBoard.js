@@ -948,10 +948,10 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 			var tempscore = 0; for(var o = 0; o < pieces[pieces.length-1].QAScores.length; o++){tempscore+=parseInt(pieces[pieces.length-1].QAScores[o]);}
 			pieces[pieces.length-1].score = tempscore;
 			scoreTrack += tempscore;
-			if(tempscore%31 != 0){
-				var temploc = tempscore%31;
-			} else {
+			if(tempscore%31 == 0 && AList.length > 0){
 				var temploc = 1;
+			} else {
+				var temploc = tempscore%31;
 			}
 			//console.log(temploc);
 			pieces[pieces.length-1].loc = temploc;
@@ -1217,13 +1217,12 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	    			} else if(bet == -1) {
 	    				alert("Plese select the amount you want to bet on "+clouds[modelBet].text+".");
 	    			} else {
+	    				mode = 0;
 	    				if(lastEvent == "none"){
-	    					alert("You have bet "+bets[bet].text+" coins on "+cloudList[modelBet]+". The game will now begin.");
-	    					mode = 0;
+	    					//alert("You have bet "+bets[bet].text+" coins on "+cloudList[modelBet]+". The game will now begin.");
 	        				draw(null, false);
 	    				} else {
-	    					alert("You have changed your bet to "+bets[bet].text+" coins on "+cloudList[modelBet]+"."); // TODO: don't display this message if bet hasn't actually changed
-	    					mode = 0;
+	    					//alert("You have changed your bet to "+bets[bet].text+" coins on "+cloudList[modelBet]+"."); // TODO: don't display this message if bet hasn't actually changed
 	    					draw(positions, false);
 	    				}
 	    			}
