@@ -158,13 +158,13 @@
 		radarChartData.datasets[4].data[5] = 40;
 		radarChartData.datasets[5].data[5] = 50;
 		
-		var options = {
+		<%-- var options = {
 			    segmentShowStroke: false,
 			    animateRotate: true,
 			    animateScale: false,
 			    percentageInnerCutout: 50,
 			    tooltipTemplate: "<%= value %>%"
-			}
+			} --%>
 		
 		myRadarChart = new Chart(chart).Radar(radarChartData,
 				{
