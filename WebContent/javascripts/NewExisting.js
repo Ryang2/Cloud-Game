@@ -1,7 +1,6 @@
 var gameName = "";
 var gameDescription = "";
 var QAArray = [];
-<<<<<<< HEAD
 var GameID;
 var bet = -1; // index of bets array
 var modelBet = -1; // index of cloudList, the cloud user bets on
@@ -58,62 +57,6 @@ angular.module('GameApp', {})
         }
     }
     $scope.loadGamesData();
-=======
-
-angular.module('GameApp', {}) 
-.controller('dataController', function($scope, $sce) {
-    $scope.filteredGames = [
-                            {
-                            	id : 0,
-                            	name : "cloudProj",
-        						description : "cloud watching project",
-        						completed : "yes"
-                             },
-                             {
-                            	 id : 1,
-                             	name : "animalProj",
-         						description : "animal study project",
-         						completed : "no"
-                              },
-                              {
-                            	  id : 2,
-                            	name : "SAP",
-        						description : "SAP integration",
-        						completed : "yes"
-                             },
-                             {
-                            	 id : 3,
-                            	name : "cloudProj",
-        						description : "cloud watching project",
-        						completed : "yes"
-                             },
-                             {
-                            	 id : 4,
-                            	name : "modernizationProj",
-        						description : "on-going modernization",
-        						completed : "no"
-                             },
-                             {
-                            	 id : 5,
-                            	name : "internProj",
-        						description : "project for interns",
-        						completed : "yes"
-                             },
-                             {
-                            	 id : 6,
-                            	name : "game",
-        						description : "game design project",
-        						completed : "yes"
-                             },
-                             {
-                            	 id : 7,
-                            	name : "newproj",
-        						description : "",
-        						completed : "no"
-                             }];
-    $scope.sortCol = 'rank';
-    $scope.sortReverse = false;
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
     $scope.sortBy = function(colName) { 
         if ($scope.sortCol == colName) {
             $scope.sortReverse = !$scope.sortReverse;
@@ -121,7 +64,6 @@ angular.module('GameApp', {})
             $scope.sortReverse = false;
         }
         $scope.sortCol = colName;
-<<<<<<< HEAD
     }
     $scope.isLoading = function() {
     	 if(loadingGame) {return true;}return false;
@@ -291,18 +233,10 @@ angular.module('GameApp', {})
 		}
 		$("#EChoose").css("display", "");
 	});
-=======
-        //$scope.$apply(); selectGame
-    }
-    $scope.selectGame = function(gameID) { 
-        console.log(gameID);
-    }
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 });
 
 $(document).ready(function(){
 	setActiveStyleSheet("NE");
-<<<<<<< HEAD
 	user = sessionStorage.getItem('user');
 	tempData = sessionStorage.getItem('tempData');
 	console.log(user);
@@ -316,21 +250,10 @@ $(document).ready(function(){
 	}
 	//$scope.filteredGames = $.parseJSON(sessionStorage.getItem('games')); scope is not defined! make a function in controller that does this for you?
 	//$scope.$apply();
-	
-=======
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	$('#newGame').click(function() {
 		$("#NorE").css("display", "none");
 		$("#NName").css("display", "");
 	});
-<<<<<<< HEAD
-=======
-	$('#existingGame').click(function() {
-		$("#NorE").css("display", "none");
-		$("#EChoose").css("display", "");
-	});
-	
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	$('#NNameSumbit').click(function() {
 		gameName = document.getElementById('gameName').value;
 		gameDescription = document.getElementById('gameDes').value;
@@ -350,38 +273,17 @@ $(document).ready(function(){
 	});
 	
 	$('div[id^=QA]').click(function() {
-<<<<<<< HEAD
 		var index = QAArray.indexOf($(this).attr('value'))
-=======
-		var index = QAArray.indexOf($(this).find('h2:eq(0)').text())
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		if(index > -1){
 			this.style.background="white";
 			QAArray.splice(index, 1)
 		} else {
 			this.style.background="gray";
-<<<<<<< HEAD
 			//QAArray.push($(this).find('h2:eq(0)').text());
 			QAArray.push($(this).attr('value'));
 		}
 		console.log(QAArray);
 	});
-	
-=======
-			QAArray.push($(this).find('h2:eq(0)').text());
-		}
-		console.log(QAArray);
-	});
-	$('#NQASubmit').click(function() {
-		if(QAArray.length == 0){
-			alert("Please select at least one quality attribute before beginning the game.");
-		} else {
-			prepGame();
-			$("#NQA").css("display", "none");
-			$("#game").css("display", "");
-		}
-	});
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	$('#NQABack').click(function(){
 		setActiveStyleSheet("NE");
 		$("#titlePic").css("display", "");
@@ -393,7 +295,6 @@ $(document).ready(function(){
 		$("#EChoose").css("display", "none");
 		$("#NorE").css("display", "");
 	});
-<<<<<<< HEAD
 });
 function cloudInfo(id){
 	this.ModelID = id;
@@ -428,6 +329,3 @@ function gameInstance(id, name, description, done){
 		this.completed = "No";
 	}
 }
-=======
-});
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa

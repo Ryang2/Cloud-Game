@@ -5,7 +5,6 @@ var context;
 var CANVAS_WIDTH = 1440;
 var CANVAS_HEIGHT = 1200;
 var mode = 4; // 0: normal, 1: help, 2: before event, 3: during event, 4: pregame help, 5: pregame select bet, 
-<<<<<<< HEAD
 			  // 6: facts/tips display screen, 7: news display screen (if needed), 8: guess the cloud, 
 			  // 9: game over, 10: menu, 11: onLoad, 12: onLoad completeGame, 13: onLoad beforeStart
 var playerStartingCoins = 0; // The amount of coins the user has before starting the game
@@ -51,41 +50,11 @@ var currentSave = 0; // Determines which data to save (if case DB gives an unfav
 
 
 function piece(name, x, y, width,sprite, colorR, colorG, colorB) { // Function for creating the pieces in the game, as well as the floating position indicators
-=======
-			  // 6: facts/tips display screen, 7: news display screen (if needed), 8: guess the cloud, 9: game over, 10 menu
-var playerStartingCoins = 100;
-var playerCoins = 100;
-var bet = -1; // index of bets array
-var modelBet = -1;
-var totalQuestions = 25;
-var questionAsked = 10;
-//var gameName = "modernizationProj";
-var cloudList = ["SAAS Public", "SAAS Private", "IAAS Public", "IAAS Private", "PAAS Public", "PAAS Private"];
-var cloudGuess = -1;
-var positions = [];
-var bonusSquares = [];
-var MAX_BONUS_SQUARES = 8;
-var showBonus = 0;
-var bonusCount = 0;
-var lowEvents = ["Facts and Tips", "Current News", "Show Bonus Squares", "Guess Which Cloud is First", "Get Coins"];
-var midEvents = ["Guess Which Cloud is First", "Change Your Bet", "Get Coins"];
-var lastEvent = "none";
-var newsArray = ["A cloud just walked into a bar. It dissolved into precipitation.", "Three clouds were seen suspiciously loitering around a tobacco store.", "Prince Cumulus and Princess Cirrostratus have set their wedding day to July of 2016."];
-var tfArray = ["A cloud is made of mostly H2O", "Clouds can block the sun's rays, providing shade.", "Cotton candies are not clouds."]; // Do we need to keep track of which tips were given to user? 
-var ween = false;
-//var QAArray = ["Security", "Scalability", "Integrability", "Availability", "Performance", "Maintainability"]; // TODO: load this up according to the user's selections!
-
-function piece(name, x, y, sprite, colorR, colorG, colorB) {
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
     this.name = name;  
     this.loc = 0;
     this.x = x;
     this.y = y;
-<<<<<<< HEAD
     this.width = width;
-=======
-    this.width = 60;
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
     this.height = this.width;
     this.sprite = Sprite(sprite);
     this.score = 0;
@@ -146,10 +115,6 @@ function piece(name, x, y, sprite, colorR, colorG, colorB) {
 		}
     }
     this.draw = function() {
-<<<<<<< HEAD
-    	//console.log(this.sprite);
-=======
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		this.sprite.draw(context, this.x, this.y);
 	},
 	this.clicked = function(xCoord, yCoord){
@@ -159,25 +124,6 @@ function piece(name, x, y, sprite, colorR, colorG, colorB) {
 			return false;
 		}
 	},
-<<<<<<< HEAD
-	
-	/*this.clicked = function(xCoord, yCoord, detectCenter){
-		if(detectCenter){
-			if(this.x-(this.width/2) <= xCoord && xCoord <= this.x-(this.width/2)+this.width && this.y <= yCoord && yCoord <= this.y+this.height){
-				return true;
-			} else {
-				return false;
-			}
-		}
-		if(this.x <= xCoord && xCoord <= this.x+this.width && this.y <= yCoord && yCoord <= this.y+this.height){
-			return true;
-		} else {
-			return false;
-		}
-	},*/
-	
-=======
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	this.init = function() {
 	      var origValues = {};
 	      for (var prop in this) {
@@ -194,19 +140,7 @@ function piece(name, x, y, sprite, colorR, colorG, colorB) {
 	  }
 }
 
-<<<<<<< HEAD
 function screenElem(color, sprite, x, y, width, height, hasText, text, textOffsetX, textOffsetY, font, fontColor){ // Function for creating the element to be drawn on the screen
-=======
-var tea = new piece("tea", 70, 920, "bcs-tea", "100", "120", "0");
-var blue = new piece("blue", 0, 980, "bcs-blue", "0", "120", "255");
-var red = new piece("red", 30, 1000, "bcs-red", "255", "0", "0");
-var black = new piece("black", 0, 920, "bcs-black", "50", "50", "50");
-var green = new piece("green", 30, 950, "bcs-green", "0", "180", "0");
-var purple = new piece("purple", 70, 980, "bcs-purple", "255", "0", "255");
-var pieces = [tea, blue, red, black, green, purple];
-
-function screenElem(color, sprite, x, y, width, height, hasText, text, textOffsetX, textOffsetY, font, fontColor){
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	this.color = color;
 	this.src = sprite;
 	this.x = x;  
@@ -226,11 +160,7 @@ function screenElem(color, sprite, x, y, width, height, hasText, text, textOffse
 			context.font = this.font;
 			context.fillText(this.text, this.x+this.textOffsetX, this.y+this.textOffsetY);
 		},
-<<<<<<< HEAD
 		this.drawWrap = function(lineOffset) { // Used if you want multiple lines of text for a single screen element
-=======
-		this.drawWrap = function(lineOffset) {
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 			context.fillStyle = this.color;
 			context.fillRect(this.x, this.y, this.width, this.height);
 			context.fillStyle = this.fontColor;
@@ -253,11 +183,7 @@ function screenElem(color, sprite, x, y, width, height, hasText, text, textOffse
 	        }
 	        context.fillText(line, this.x+this.textOffsetX, this.y+this.textOffsetY+lineOffset*lineNumber);
 		},
-<<<<<<< HEAD
 		this.drawResize = function(hasBorder) { // Used if you want to shrink the font to fit the screen element
-=======
-		this.drawResize = function(hasBorder) {
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 			context.fillStyle = this.color;
 			context.fillRect(this.x-(this.width/2), this.y, this.width, this.height);
 			context.fillStyle = this.fontColor;
@@ -309,25 +235,16 @@ function screenElem(color, sprite, x, y, width, height, hasText, text, textOffse
 			return false;
 		}
 	}
-<<<<<<< HEAD
-	
 }
 
 // Screen elements for the HUD
 var HUD = new screenElem("#8fefbf", null, 0, 0, 1432, 60, false, null, null, null, null, null);
-=======
-}
-
-// Screen elements for the menu
-var menu = new screenElem("#8fefbf", null, 4, 4, 1432, 60, false, null, null, null, null, null);
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 var menuButton = new screenElem("#000066", null, 1374, 30, 60, 34, true, "Menu", 9, 22, "bold 16px sans-serif", "#FFFFFF");
 var helpButton = new screenElem("#000066", null, 1310, 30, 60, 34, true, "Help", 12, 22, "bold 16px sans-serif", "#FFFFFF");
 
 // Screen elements for the questions in the center of the board
 var quesBG = new screenElem("#FFFFFF", null, 248, 336, 944, 584, false, null, null, null, null, null);
 var quesTitle = new screenElem("#99ff99", null, 715, 360, 894, 100, true, "", 0, 66, "bold 64px sans-serif", "#000000"); // 859 max text length 40
-<<<<<<< HEAD
 
 var star1 = new piece("star1", 342, 608, 100, "wstar", "0", "120", "255");
 var star2 = new piece("star2", 492, 608, 100, "wstar", "0", "120", "255");
@@ -342,15 +259,6 @@ var star13 =  new piece("star3", 642, 608, 100, "bstar", "0", "120", "255");
 var star14 = new piece("star4", 792, 608, 100, "bstar", "0", "120", "255");
 var star15 = new piece("star5", 942, 608, 100, "bstar", "0", "120", "255");     
 var quesAnsw2 = [star11, star12, star13, star14, star15];	//blue stars
-=======
-var quesAnsw = [ 
-     new screenElem("#45e545", null, 342, 490, 764, 64, true, "5: Completely essential.", 16, 46, "36px sans-serif", "#000000"),
-     new screenElem("#45e545", null, 342, 574, 764, 64, true, "4: Useful.", 16, 46, "36px sans-serif", "#000000"),
-     new screenElem("#45e545", null, 342, 658, 764, 64, true, "3: Useful but not a priority.", 16, 46, "36px sans-serif", "#000000"),
-     new screenElem("#45e545", null, 342, 742, 764, 64, true, "2: Not important.", 16, 46, "36px sans-serif", "#000000"),
-     new screenElem("#45e545", null, 342, 826, 764, 64, true, "1: Not needed.", 16, 46, "36px sans-serif", "#000000") //console.log(context.measureText(this.text).width); //729 is max?
-];
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 
 // Other elements
 var dimOut = new screenElem("rgba(211, 211, 211, 0.5)", null, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, false, null, null, null, null, null);
@@ -371,7 +279,6 @@ var helpDesc01 =
 		"receive coins if you guess correctly. There are also bonus " +
 		"squares the pieces may land on, which leads to random " +
 		"events. ";
-<<<<<<< HEAD
 /*var helpDesc02 = 
 =======
 var helpDesc02 = 
@@ -402,8 +309,6 @@ var helpDesc02 =
 	"Guess Which Cloud is First: Shows you what cloud the piece in 1st place represents and gives you coins if you guess correctly." +
 	"                            " +
 	"                                                                                                                                                     "+
-=======
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	"Change Your Bet: Allows you to change the cloud and the amount you bet on.";
 var helpDesc10 = "(Click anywhere in the game to close this help screen.)";
 var helpText1 = new screenElem("#d3d3d3", null, 230, 350, 1000, 600, true, helpDesc01, 16, 46, "36px sans-serif", "#000000");
@@ -429,22 +334,14 @@ var cloud4 = new screenElem("#FFFFFF", null, 390, 545, 240, 120, true, cloudList
 var cloud5 = new screenElem("#FFFFFF", null, 710, 545, 240, 120, true, cloudList[4], 0, 72, "36px sans-serif", "#001d87");
 var cloud6 = new screenElem("#FFFFFF", null, 1030, 545, 240, 120, true, cloudList[5], 0, 72, "36px sans-serif", "#001d87");
 var clouds = [cloud1, cloud2, cloud3, cloud4, cloud5, cloud6];
-<<<<<<< HEAD
 var betText2 = new screenElem("#c2dcd6", null, 710, 730, 480, 50, true, "Your Coins: "+(parseInt(playerCoins)+parseInt(playerStartingCoins)), 0, 30, "bold 36px sans-serif", "#000000");
-=======
-var betText2 = new screenElem("#c2dcd6", null, 710, 730, 480, 50, true, "Your Coins: "+playerCoins, 0, 30, "bold 36px sans-serif", "#000000");
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 var bet1 = new screenElem("#FFFFFF", null, 366, 828, 120, 60, true, "10", 0, 42, "36px sans-serif", "#001d87"); 
 var bet2 = new screenElem("#FFFFFF", null, 602, 828, 120, 60, true, "20", 0, 42, "36px sans-serif", "#001d87");
 var bet3 = new screenElem("#FFFFFF", null, 838, 828, 120, 60, true, "50", 0, 42, "36px sans-serif", "#001d87");
 var bet4 = new screenElem("#FFFFFF", null, 1074, 828, 120, 60, true, "100", 0, 42, "36px sans-serif", "#001d87"); 
 var bets = [bet1, bet2, bet3, bet4];
 var betButton = new screenElem("#000066", null, 710, 938, 80, 40, true, "Confirm", 0, 24, "bold 16px sans-serif", "#FFFFFF");
-
-<<<<<<< HEAD
 //Screen elements for the menu
-=======
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 var menuBG = new screenElem("#91c0b5", null, 710, 300, 400, 600, true, "", 0, 72, "36px sans-serif", "#001d87");
 var menuTitle = new screenElem("rgba(0, 0, 0, 0)", null, 710, 345, 220, 100, true, "MENU", 0, 24, "bold 48px sans-serif", "#000066");
 var menuSave = new screenElem("#000066", null, 710, 480, 320, 60, true, "Save", 0, 44, "bold 48px sans-serif", "#FFFFFF");
@@ -452,22 +349,13 @@ var menuQuit = new screenElem("#000066", null, 710, 640, 320, 60, true, "Quit", 
 var menuEvents = new screenElem("#000066", null, 710, 560, 320, 60, true, "Detailed Help", 0, 44, "bold 48px sans-serif", "#FFFFFF");
 var menuButtons = [menuSave, menuQuit, menuEvents];
 
-<<<<<<< HEAD
 function answer(id, title, points1, points2, points3, points4, points5, points6){ // Function to create answer object that are tied to questions
 	this.id = id; 
-=======
-function answer(id, title, points1, points2, points3, points4, points5, points6){
-	this.id = id;
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	this.title = title;
 	this.points = [points1, points2, points3, points4, points5, points6];
 }
 
-<<<<<<< HEAD
 function questions(id, title, QA, ansID, ansTitle, ansPts){ // Function to create question objects to be used in the game
-=======
-function questions(id, title, QA, ansID, ansTitle, ansPts){
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	this.id = id;
 	this.title = title;
 	this.QA = QA
@@ -480,19 +368,12 @@ function questions(id, title, QA, ansID, ansTitle, ansPts){
 	];
 	this.answered = false;
 	this.choice = -1;
-<<<<<<< HEAD
 	this.clicked = -1;
 	this.comment = "";
 }
 
 
 /*var QList = [ // temp array of questions, will be replaced by organized data from server
-=======
-}
-
-
-var QList = [
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
                  new questions(0, "How important is server virtualization to you?", "Security", [0, 1, 2, 3, 4], 
                 		 ["5: Completely essential.", "4: Useful.", "3: Useful but not a priority.", "2: Not important.", "1: Not needed."], 
                 		 [1, 2, 3, 4, 5, 6, 2, 4, 5, 6, 3, 1, 4, 5, 2, 6, 3, 1, 5, 4, 2, 3, 1, 6, 6, 5, 4, 3, 2, 1, 3, 5, 6, 1, 4, 2]),
@@ -511,13 +392,8 @@ var QList = [
         		 new questions(5, "How useful is Maintainability?", "Maintainability", [25, 26, 27, 28, 29], 
         				 ["5", "4", "3", "2", "1"],
                 		 [1, 2, 3, 4, 5, 6, 2, 4, 5, 6, 3, 1, 4, 5, 2, 6, 3, 1, 5, 4, 2, 3, 1, 6, 6, 5, 4, 3, 2, 1, 3, 5, 6, 1, 4, 2])
-<<<<<<< HEAD
                 ];*/
 var curQues = -1; // Keeps track of the questions asked. 
-=======
-                ];
-var curQues = -1;
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 
 // Main draw function. Calls other draw functions depending on mode. Drawing using onload is asynchronous so need to be timed correctly
 function draw(moveData, isMoving) { 
@@ -546,11 +422,7 @@ function draw(moveData, isMoving) {
 			drawSquares();
 			// Draw the game pieces
 			drawPieces();
-<<<<<<< HEAD
 			if(moveData != null && mode != 13){
-=======
-			if(moveData != null){
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 				drawSigns(moveData);
 			}
 			if(isMoving){
@@ -562,17 +434,11 @@ function draw(moveData, isMoving) {
 				openHelpMenu(1);
 			} else if(mode == 5){
 				openBetMenu(0);
-<<<<<<< HEAD
 			} else if(mode == 11 || mode == 13){
 				openHelpMenu(1);
 			} else if(mode == 12){
 				openEndMenu();
 			}
-=======
-			} /*else if(mode == 9){
-				openEndMenu();
-			}*/
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		};
 	};
 }
@@ -580,7 +446,6 @@ function drawPieces() {
 	for(var i = pieces.length-1; i >= 0; i--){
 		pieces[i].draw();
 	}
-<<<<<<< HEAD
 	/*if(mode == 3){
 		alert("!"); // Is this really needed?
 		openBonusScreen();
@@ -594,14 +459,6 @@ function drawQues(){
 function drawSigns(positions){ // For each piece, draw the floating indicators while preventing complete overlap
 	positions.sort(function(a, b){return b.score > a.score ? 1 : -1;});
 	console.log(positions);
-=======
-	if(mode == 3){
-		openBonusScreen();
-	}
-}
-function drawSigns(positions){
-	positions.sort(function(a, b){return b.score > a.score ? 1 : -1;});
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	var checked = {};
 	var pos = 1;
 	for(var i in positions){
@@ -631,11 +488,7 @@ function drawSigns(positions){
 			positions[i].piece.rankSign.src = "C"+pos+".png";
 			positions[i].piece.rankSign.arrowSrc = "CA"+boardSpaces[sqr].orientation+".png";
 			positions[i].piece.rank = pos;
-<<<<<<< HEAD
 			if(mode == 0 || mode == 11){
-=======
-			if(mode == 0){
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 				positions[i].piece.rankSign.draw(positions[i].piece.rankSign);
 			}
 			checked[""+sqr] = 1;							// Record the square as being checked already
@@ -668,11 +521,7 @@ function drawSigns(positions){
 				positions[i].piece.rankSign.src = "C"+pos+".png";
 				positions[i].piece.rankSign.arrowSrc = "CA"+boardSpaces[sqr].orientation+".png";
 				positions[i].piece.rank = pos;
-<<<<<<< HEAD
 				if(mode == 0 || mode == 11){
-=======
-				if(mode == 0){
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 					positions[i].piece.rankSign.draw(positions[i].piece.rankSign);
 				}
 				checked[""+sqr] += 1;
@@ -686,20 +535,12 @@ function drawSigns(positions){
 		}
 	}
 	if(mode == 9){
-<<<<<<< HEAD
 		openEndMenu(); // The game is over
-=======
-		openEndMenu();
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	}
 }
 function checkBonus(){
 	bonusCount = 0;
-<<<<<<< HEAD
 	for(var l in pieces){ // Highlight the bonus squares
-=======
-	for(var l in pieces){
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		var isBonus = bonusSquares.indexOf(pieces[l].loc);
 		if(isBonus > -1){console.log(pieces[l].loc);
 			console.log(bonusSquares);
@@ -746,11 +587,7 @@ function checkBonus(){
 	}
 }
 
-<<<<<<< HEAD
 function writeMessage(canvas, message) { // Was used for debugging, no longer used
-=======
-function writeMessage(canvas, message) {
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
     //context.clearRect(10, 8, 270, 24);
 	context.fillStyle="#8fefbf";
 	context.fillRect(10, 8, 300, 24);
@@ -765,21 +602,12 @@ function getMousePos(canvas, evt) {
 		y: parseInt(evt.clientY - rect.top)
 	};
 }
-<<<<<<< HEAD
 function openHelpMenu(type){ // If type is 1, show the normal help menu, else show the advanced help menu
 	dimOut.draw();
 	helpBG.draw();
 	if(type == 1){
 		if(mode == 11 || mode == 13){welcomeText1.text = "Welcome Back to Cloud Race!";}else{welcomeText1.text = "Welcome to Cloud Race!";}
 		helpText1.text = helpDesc01;
-=======
-function openHelpMenu(type){
-	dimOut.draw();
-	helpBG.draw();
-	if(type == 1){
-		helpText1.text = helpDesc01;
-		welcomeText1.text = "Welcome to Cloud Race!";
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		welcomeText1.color = "#d3d3d3";
 		welcomeText1.font = "bold 48px sans-serif"
 		helpText1.drawWrap(45);
@@ -792,11 +620,7 @@ function openHelpMenu(type){
 		helpText1.drawWrap(34);
 	}
 	context.textAlign="center";
-<<<<<<< HEAD
 	if(mode == 4 || mode == 11 || mode == 13 || type == 2){
-=======
-	if(mode == 4 || type == 2){
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		welcomeText1.draw();
 	}
 	helpTextEnd.draw();
@@ -842,29 +666,21 @@ function openBetMenu(type){
 	for(var i in clouds){
 		clouds[i].drawResize(true);
 	}
-<<<<<<< HEAD
-=======
-	betText2.drawResize(false);
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	for(var j in bets){
 		bets[j].drawResize(true);
 	}
 	betButton.text = "Confirm";
 	betButton.drawResize(false);
-<<<<<<< HEAD
 	if(lastEvent == "none" && parseInt(playerCoins)+parseInt(playerStartingCoins) < 10){
 		playerCoins = 10;
 		alert("You're a bit poor, so we gave you some coins.");
 	}
 	betText2.text = "Your Coins: "+(parseInt(playerCoins)+parseInt(playerStartingCoins));
 	betText2.drawResize(false);
-=======
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	context.textAlign="left";
 }
 function openTextMenu(type){
 	if(type == 0){ // facts/tips
-<<<<<<< HEAD
 		if(tipsArray.length > 0){
 			var num = 0;
 			console.log(tipsArray);
@@ -886,15 +702,6 @@ function openTextMenu(type){
 			}
 		} else {
 			bonusText1.text = "No more tips to display";
-=======
-		if(tfArray.length > 0){
-			var num = Math.floor(Math.random() * tfArray.length);
-			bonusText1.text = "Did you know?";
-			bonusText2.text = tfArray[num];
-			tfArray.splice(num, 1);
-		} else {
-			bonusText1.text = "No more tips/facts to display";
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 			bonusText2.text = "Sorry!";
 		}
 	} else { // news
@@ -954,12 +761,8 @@ function openEndMenu(){
 	bonusTextEnd.draw();
 	var lastRank = -1;
 	var firstRank = -1;
-<<<<<<< HEAD
 	for(var i = positions.length-1; i > -1; i--){ // Place the image of the pieces according to their place
 		var uwai;
-=======
-	for(var i = positions.length-1; i > -1; i--){ var uwai;
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		if(lastRank == -1){
 			lastRank = positions[i].piece.rank;
 			uwai = 694;
@@ -1004,15 +807,10 @@ function openEndMenu(){
 	}
 	bonusText1.drawResize();
 	drawPieces();
-<<<<<<< HEAD
 	context.textAlign="left";
 	if(mode != 12){
 		saveGame();
 	}
-	// TODO close tab warning if not finished saving
-=======
-	context.textAlign="left"; // TODO: after accounting for ties, be sure to reward the player with coins if they guessed correct!
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 }
 function openMainMenu(){
 	dimOut.draw(); 
@@ -1025,11 +823,7 @@ function openMainMenu(){
 	context.textAlign="left";
 }
 
-<<<<<<< HEAD
-function makeMove(array){ // TODO: character limit?
-=======
 function makeMove(array){
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	//var array = [1, 2, 3, 4, 5, 6];
 	//var array = [1, 1, 1, 1, 1, 1]; //Switch arrays to see how it looks like if all 6 is clumped together
 	//console.log("Below");
@@ -1040,19 +834,12 @@ function makeMove(array){
 		//var num = Math.floor(Math.random() * (i - 0 + 1)); // Get the number of spaces to move (currently random)
 		//if(i == 2){array[num]=1;}else if(i == 4){array[num]=31;} // test code to simulate lapping behavior
 		//var dest = pieces[5-i].loc+array[num];
-<<<<<<< HEAD
 		var dest = pieces[i].loc+parseInt(array[i]);
 		//console.log(dest);
 		if(dest > 30){ // If the end is reached, loop back to start
 			dest -= 30;
 		}
 		//console.log(dest);
-=======
-		var dest = pieces[i].loc+array[i];
-		if(dest > 30){ // If the end is reached, loop back to start
-			dest -= 30;
-		}
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		if(boardSpaces[dest].occupants.length > 0){ // If there's already a piece in destination (we don't want the pieces to completely overlap each other)
 			var numPieces = 0;
 			for(var j in boardSpaces[dest].occupants) { // Check to see if the occupants have moved yet this turn
@@ -1085,20 +872,12 @@ function makeMove(array){
 		}
 		var index = boardSpaces[pieces[i].loc].occupants.indexOf(i);
 		if (index > -1) {
-<<<<<<< HEAD
 			boardSpaces[pieces[i].loc].occupants.splice(index, 1); // Remove piece from former space
-=======
-			boardSpaces[pieces[i].loc].occupants.splice(index, 1);
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		}
 		pieces[i].loc = dest;
 		boardSpaces[dest].occupants.push(i);
 		//pieces[5-i].score += array[num];
-<<<<<<< HEAD
 		//pieces[i].score += array[i];
-=======
-		pieces[i].score += array[i];
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		positions.push({
 			piece: pieces[i],
 			location: pieces[i].loc,
@@ -1110,7 +889,6 @@ function makeMove(array){
 	//getDB();
 }
 //$(document).ready(function() {
-<<<<<<< HEAD
 function prepGame(qQues, qTips, qClouds){ // Function to run when starting the game.
 	window.onbeforeunload = function(event) {
 		console.log(qString);
@@ -1217,25 +995,10 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 			bet = -1;
 		}
 	}
-	
-	//console.log(gameName);
 	/*for(var j in pieces){
 		console.log("The "+pieces[j].name+" piece is the cloud "+pieces[j].cloud+".");
 	}*/
-	
-	
-	
-	
-	
-	
 	canvas.addEventListener('mousemove', function(evt) { // Function to handle mousing over screen elements
-=======
-function prepGame(){
-	canvas = document.getElementById("interface");
-	context = canvas.getContext('2d');
-	
-	canvas.addEventListener('mousemove', function(evt) {
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	    var mousePos = getMousePos(canvas, evt);
 	    var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
 	    $("p[id^=posMsg]").text(message);
@@ -1261,41 +1024,21 @@ function prepGame(){
 	    		bonusText3.draw();
 	    		context.textAlign = "left";
 	    	}
-<<<<<<< HEAD
 	    } else if(mode == 0){
-	    	var hover = false;
-	    	//var star;
-	    	//console.log(hover);
-	    	
 	    	for(var i = 0; i < quesAnsw.length; i++){
 	    		if(quesAnsw[i].clicked(mousePos.x,mousePos.y)){
-	    			//console.log(i);
 	    			for(var j=0;j<quesAnsw.length;j++){
 	    				if(j <= i){
 	    					quesAnsw2[j].draw();
-	    					//quesAnsw[j].sprite = Sprite("bstar");
-	    					//console.log(j+" b "+i);
 	    				} else {
 	    					quesAnsw[j].draw();
-	    					//console.log(j+" w "+i);
 	    				}
 	    			}
-	    			hover = true;
 	    			break;
 	    		}
 	    	}
-	    	//console.log("After loop");
-	    	//console.log(hover);
-	    	/*if(hover){
-	    		console.log("draw");
-	    		drawQues();
-	    	}*/
-	    	
 	    }
 	    else if(mode == 9 || mode == 12){
-=======
-	    } else if(mode == 9){
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	    	var hover = false;
 	    	for(var i in pieces){
 	    		if(pieces[i].clicked(mousePos.x, mousePos.y)){
@@ -1313,31 +1056,7 @@ function prepGame(){
 	    }
 	    //writeMessage(canvas, message);
 	 }, false);
-	
-<<<<<<< HEAD
-	$("#interface").click(function(evt){ // Function to handle click events
-=======
-	setBonusSquares(MAX_BONUS_SQUARES);
-	var tempList = cloudList.slice();
-	//console.log(QAArray);
-	for(var i in pieces){
-		for(var k in QAArray){
-			pieces[i].QAScores.push(0);
-		}
-		pieces[i].init();
-		var num = Math.floor(Math.random() * tempList.length);
-		pieces[i].cloud = tempList[num];
-		//pieces[i].cloud = tempList[i];
-		tempList.splice(num, 1);
-	}
-	for(var j in pieces){
-		console.log("The "+pieces[j].name+" piece is the cloud "+pieces[j].cloud+".");
-	}
-	nextQuestion();
-	draw(null, false); // Draw the board, not including the signs
-	
-	$("#interface").click(function(evt){
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
+$("#interface").click(function(evt){ // Function to handle click events
 	    var x = Math.floor((evt.pageX-$("#interface").offset().left) / 20);
 	    var y = Math.floor((evt.pageY-$("#interface").offset().top) / 20);
 		var mousePos = getMousePos(canvas, evt);
@@ -1345,7 +1064,6 @@ function prepGame(){
 	    /*context.fillStyle = "rgb(255,255,255)";
 	    context.fillRect(x*20, y*20, 20, 20);*/
 	    message += ". Position of square (20x20) on grid is: "+x*20+" "+y*20;
-<<<<<<< HEAD
 	    //alert(mode);
 	    if(mode == 0){
 	        if(HUD.clicked(mousePos.x, mousePos.y, false)){
@@ -1376,62 +1094,10 @@ function prepGame(){
                 	}
         		}
 	        }/* else {
-=======
-	    
-	    //alert(mode);
-	    if(mode == 0){
-	        var isClicked = false;
-	        if(menu.clicked(mousePos.x, mousePos.y, false)){
-	        	if(menuButton.clicked(mousePos.x, mousePos.y, false)){
-	        		$("#msg").text("Menu Button is clicked! "+message);
-		        	//alert("Menu Button is clicked! "+message);
-		        	isClicked = true;
-		        	mode = 10;
-		        	openMainMenu();
-	        	} else if(helpButton.clicked(mousePos.x, mousePos.y, false)){
-	        		$("#msg").text("Help Button is clicked! "+message);
-		        	//alert("Help Button is clicked! "+message);
-		        	isClicked = true;
-		        	mode = 1;
-		        	openHelpMenu(1);
-	        	} else {
-		        	$("#msg").text("Menu Bar is clicked! "+message);
-		        	//alert("Menu Bar is clicked! "+message);
-		        	isClicked = true;
-	        	}
-	        } else if(quesBG.clicked(mousePos.x, mousePos.y, false)){
-	        	if(quesTitle.clicked(mousePos.x, mousePos.y, false)){
-	        		$("#msg").text("Question is clicked! "+message);
-	        		//alert("Question is clicked! "+message);
-	        		isClicked = true;
-	        	} else {
-	        		for(var i = 0, len = quesAnsw.length; i < len; i++) {
-	        			if(quesAnsw[i].clicked(mousePos.x, mousePos.y, false)){
-	        				$("#msg").text("Answer number "+(parseInt(i)+1)+" is clicked! "+message);
-	                		//var array = answerQuestion(i);
-	                		makeMove(answerQuestion(i));
-	                		isClicked = true;
-	            			break;
-	                	}
-	        		}
-	        		if(!isClicked){
-	        			$("#msg").text("Question Screen is clicked! "+message);
-	        			//alert("Question Screen is clicked! "+message);
-	        			isClicked = true;
-	        		}
-	        	}
-	        } else {
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	        	for(var i in pieces) {
 	    			if(pieces[i].clicked(mousePos.x, mousePos.y)){
 	    				$("#msg").text("The "+pieces[i].name+" piece is clicked! "+message);
 	            		//alert("The "+pieces[i].name+" piece is clicked! "+message);
-<<<<<<< HEAD
-	        			break;
-	            	}
-	    		}
-	        }*/
-=======
 	            		isClicked = true;
 	        			break;
 	            	}
@@ -1440,8 +1106,7 @@ function prepGame(){
 	        if(!isClicked){
 	        	$("#msg").text("Didn't click on anything. "+message);
 	        	//alert("Didn't click on anything. "+message);
-	        }
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
+	        }*/
 	    } else if(mode == 1) {
 	    	mode = 0;
 	    	if(boardSpaces[0].occupants.length > 0){
@@ -1471,29 +1136,19 @@ function prepGame(){
 	        		mode = 5;
 	        		draw(positions, false);
 	        	} else {
-<<<<<<< HEAD
 	        		console.log(playerCoins);
 	        		playerCoins = parseInt(playerCoins) + bonusCount * 10;
 	        		alert("You gained "+bonusCount * 10+" coins!");
 	        		console.log(playerCoins);
-=======
-	        		playerCoins += bonusCount * 10;
-	        		alert("You gained "+bonusCount * 10+" coins!")
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	        		mode = 0;
 	        		draw(positions, false);
 	        	}
 	    	} else {
 	    		if(eventLeft.clicked(mousePos.x, mousePos.y, true)){
-<<<<<<< HEAD
 	    			console.log(playerCoins);
 	    			playerCoins = parseInt(playerCoins) + bonusCount * 10;
 	        		alert("You gained "+bonusCount * 10+" coins!");
 	        		console.log(playerCoins);
-=======
-	    			playerCoins += bonusCount * 10;
-	        		alert("You gained "+bonusCount * 10+" coins!")
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	        		mode = 0;
 	        		draw(positions, false);
 	        	} else if(eventRight.clicked(mousePos.x, mousePos.y, true)){
@@ -1534,7 +1189,6 @@ function prepGame(){
 	    		}
 	    		for(var j in bets){
 	    			if(bets[j].clicked(mousePos.x, mousePos.y, true)){
-<<<<<<< HEAD
 	    				if((bet != -1 && parseInt(bets[j].text) <= (parseInt(playerCoins)+parseInt(playerStartingCoins)) + parseInt(bets[bet].text)) ||
 	    						(bet == -1 && parseInt(bets[j].text) <= (parseInt(playerCoins)+parseInt(playerStartingCoins)))){
 		    				if(bet != -1){
@@ -1580,39 +1234,6 @@ function prepGame(){
 	    					console.log(playerCoins);
 	    					console.log(playerStartingCoins);
 	    					alert("Sorry! You don't have enough coins for that bet.");
-=======
-	    				if(bet != -1){
-	    					bets[bet].color = "#FFFFFF";
-	    					bets[bet].fontColor = "#001d87";
-	        				context.textAlign = "center";
-	        				bets[bet].drawResize(true);
-	        				context.textAlign = "left";
-	        				playerCoins += parseInt(bets[bet].text);
-	    				}
-	    				if(bet != j){
-	    					bets[j].color = "#001d87";
-	    					bets[j].fontColor = "#FFFFFF";
-	        				context.textAlign = "center";
-	        				bets[j].drawResize(true);
-	        				context.textAlign = "left";
-	        				bet = j;
-	        				playerCoins -= parseInt(bets[bet].text); // if player have 0 coins...
-	        				betText2.text = "Your Coins: "+playerCoins;
-	        				context.fillStyle="#c2dcd6";
-	        	    		context.fillRect(710, 730, 500, 50);
-	        	    		context.textAlign = "center";
-	        	    		betText2.drawResize(false);
-	        	    		context.textAlign = "left";
-	        				break;
-	    				} else {
-	    					bet = -1;
-	    					betText2.text = "Your Coins: "+playerCoins;
-	        				context.fillStyle="#c2dcd6";
-	        	    		context.fillRect(710, 730, 500, 50);
-	        	    		context.textAlign = "center";
-	        	    		betText2.drawResize(false);
-	        	    		context.textAlign = "left";
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	    					break;
 	    				}
 	    			}
@@ -1625,22 +1246,12 @@ function prepGame(){
 	    			} else if(bet == -1) {
 	    				alert("Plese select the amount you want to bet on "+clouds[modelBet].text+".");
 	    			} else {
-<<<<<<< HEAD
 	    				mode = 0;
 	    				if(lastEvent == "none"){
 	    					//alert("You have bet "+bets[bet].text+" coins on "+cloudList[modelBet]+". The game will now begin.");
 	        				draw(null, false);
 	    				} else {
 	    					//alert("You have changed your bet to "+bets[bet].text+" coins on "+cloudList[modelBet]+"."); // TODO: don't display this message if bet hasn't actually changed
-=======
-	    				if(lastEvent == "none"){
-	    					alert("You have bet "+bets[bet].text+" coins on "+cloudList[modelBet]+". The game will now begin.");
-	    					mode = 0;
-	        				draw(null, false);
-	    				} else {
-	    					alert("You have changed your bet to "+bets[bet].text+" coins on "+cloudList[modelBet]+".");
-	    					mode = 0;
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	    					draw(positions, false);
 	    				}
 	    			}
@@ -1680,15 +1291,10 @@ function prepGame(){
 	    			} else {
 	    				console.log(positions[0].piece.cloud+" is equal to "+clouds[cloudGuess].text+"?");
 	    				if(positions[0].piece.cloud === clouds[cloudGuess].text){
-<<<<<<< HEAD
 	    					console.log(playerCoins);
 	    					alert("Congratulations! The "+positions[0].piece.name+"-colored piece represents "+positions[0].piece.cloud+"! You gained 50 coins!");
 	    					playerCoins = parseInt(playerCoins) + 50;
 	    					console.log(playerCoins);
-=======
-	    					alert("Congratulations! The "+positions[0].piece.name+"-colored piece represents "+positions[0].piece.cloud+"! You gained 50 coins!");
-	    					playerCoins += 50;
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	    				} else {
 	    					alert("Sorry! The "+positions[0].piece.name+"-colored piece actually represents "+positions[0].piece.cloud+".");
 	    				}
@@ -1706,7 +1312,6 @@ function prepGame(){
 	    } else if(mode == 9){
 	    	if(ween){
 	    		var reward = parseInt(bets[bet].text)*2
-<<<<<<< HEAD
 	    		playerCoins = parseInt(playerCoins) + reward;
 	    		alert("You've won the bet! You gained "+reward+" coins and now have "+(parseInt(playerCoins)+parseInt(playerStartingCoins))+" coins.");
 	    	}
@@ -1719,31 +1324,15 @@ function prepGame(){
 	    	sessionStorage.setItem('pieces', JSON.stringify(pieces));
 	    	AList.push.apply(AList, QList);
 	    	sessionStorage.setItem('QList', JSON.stringify(AList));
-=======
-	    		playerCoins += reward;
-	    		alert("You've won the bet! You gained "+reward+" coins and now have "+playerCoins+" coins.");
-	    	}
-	    	sessionStorage.setItem('QA', JSON.stringify(QAArray));
-	    	sessionStorage.setItem('pieces', JSON.stringify(pieces));
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	    	window.location = "SpiderChart.html"
 	    } else if(mode == 10){
 	    	if(menuBG.clicked(mousePos.x, mousePos.y, true)){
 	    		if(menuSave.clicked(mousePos.x, mousePos.y, true)){
-<<<<<<< HEAD
 	    			saveGame();
 	    			mode = 0;
 	    			draw(positions, false);
 	    		} else if(menuQuit.clicked(mousePos.x, mousePos.y, true)){
 	    			window.location = "NewExisting.html"
-=======
-	    			mode = 0;
-	    			draw(positions, false);
-	    		} else if(menuQuit.clicked(mousePos.x, mousePos.y, true)){
-	    			reset();
-	    			mode = 4;
-	    			draw(null, false);
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	    		} else if(menuEvents.clicked(mousePos.x, mousePos.y, true)){
 	    			mode = 1;
 	    			openHelpMenu(2);
@@ -1752,7 +1341,6 @@ function prepGame(){
 	    		mode = 0;
 	    		draw(positions, false);
 	    	}
-<<<<<<< HEAD
 	    } else if(mode == 11){
 	    	mode = 0;
 	    	draw(positions, false);
@@ -1779,36 +1367,19 @@ function prepGame(){
 	 });
 }
 function answerQuestion(ans){ // Calculates how many spaces to move each piece
-=======
-	    }
-	 });
-}
-function answerQuestion(ans){ 
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	if(curQues == -1){
 		nextQuestion();
 	} else {
 		var pts = QList[curQues].answer[ans].points;
-<<<<<<< HEAD
-		//console.log(pts);
 		var arr = [];
 		for(var i = 0, len = pieces.length; i < len; i++){
 			var score = pts[cloudList.indexOf(pieces[i].cloud)];
-			//console.log(score);
 			arr.push(score);
-			var QAIndex = QAArray.indexOf(""+(QAIDList.indexOf(QList[curQues].QA)+1));
-			//console.log(QAIDList.indexOf(QList[curQues].QA));
-			//console.log(QList[curQues].QA);
-			//console.log(QAArray);
-			//console.log(QAIndex);
+			var QAIndex = QAArray.indexOf(""+(QAIDList.indexOf(QList[curQues].QA)+1));;
 			pieces[i].score = parseInt(pieces[i].score) + parseInt(score);
-			//console.log(score);
-			//console.log("Before: "+pieces[i].QAScores[QAIndex]);
 			if(QAIndex > -1){
 				pieces[i].QAScores[QAIndex] = parseInt(pieces[i].QAScores[QAIndex]) + parseInt(score); 
 			}
-			//console.log(score);
-			//console.log("After: "+pieces[i].QAScores[QAIndex]);
 		}
 		QList[curQues].answered = true;
 		QList[curQues].choice = QList[curQues].answer[ans].id;
@@ -1820,41 +1391,17 @@ function answerQuestion(ans){
 		//console.log(QAArray[QList[curQues].QA]);
 		console.log(arr);
 		console.log(pieces);
-=======
-		console.log(pts);
-		var arr = [];
-		for(var i = 0, len = pieces.length; i < len; i++){
-			var score = pts[cloudList.indexOf(pieces[i].cloud)];
-			arr.push(score);
-			var QAIndex = QAArray.indexOf(QList[curQues].QA);
-			if(QAIndex > -1){
-				pieces[i].QAScores[QAIndex] += score; 
-			}
-		}
-		QList[curQues].answered = true;
-		QList[curQues].choice = QList[curQues].answer[ans].id;
-		//console.log(QAArray[QList[curQues].QA]);
-		//console.log(arr);
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		nextQuestion();
 		return arr;
 	}
 }
-<<<<<<< HEAD
 function nextQuestion(){ // Load the next question into the screen elements, or signal the end of the game if there are no more questions
-=======
-function nextQuestion(){
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	if(curQues+1<QList.length){
 		curQues = curQues + 1;
 		quesTitle.text = QList[curQues].title;
-		//console.log(quesAnsw);
 		for(var i = 0, len = quesAnsw.length; i < len; i++){
-			//console.log(i+" is num?");
-			//console.log(QList);
 			quesAnsw[i].text = QList[curQues].answer[i].title;
 		}
-<<<<<<< HEAD
 		questionAsked += 1;
 	} else {
 		questionAsked += 1;
@@ -1862,13 +1409,6 @@ function nextQuestion(){
 	}
 }
 function reset(){ // Not actually used anymore
-=======
-	} else {
-		mode = 9;
-	}
-}
-function reset(){
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	bonusSquares = [];
 	setBonusSquares(MAX_BONUS_SQUARES);
 	var tempList = cloudList.slice();
@@ -1901,16 +1441,9 @@ function reset(){
 	curQues = -1
 	boardSpaces[0].occupants = [0, 1, 2, 3, 4, 5];
 }
-
-<<<<<<< HEAD
 function drawSquares() { // draw the screen elements
 	// Draw the background for the Menu bar
 	HUD.draw();
-=======
-function drawSquares() {
-	// Draw the background for the Menu bar
-	menu.draw();
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	// Draw the background for the questions
 	quesBG.draw();
 	// Draw the question title box
@@ -1924,29 +1457,19 @@ function drawSquares() {
 	// Draw HUD elements
     context.font = 'bold 18pt Calibri';
     context.fillStyle = 'black';
-<<<<<<< HEAD
     //console.log(gameName);
     //context.fillText(gameName, 10, 25);
-=======
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
     context.fillText(gameName, 10, 25);
     context.font = '18pt Calibri';
     context.fillStyle = 'black';
     context.textAlign="center"; 
-<<<<<<< HEAD
     //console.log(": "+bet+": "+modelBet);
-=======
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
     if(bet > -1 && modelBet > -1){context.fillText("Bet: "+bets[bet].text+" coins on "+cloudList[modelBet], 723, 54);}
     context.textAlign = "right";
     context.fillText(questionAsked+"/"+totalQuestions+" Questions Answered", 1432, 25);
     context.textAlign = "left";
-<<<<<<< HEAD
     console.log("Didn't change: "+playerStartingCoins);
     context.fillText("Your coins: "+(parseInt(playerCoins)+parseInt(playerStartingCoins)), 10, 54);
-=======
-    context.fillText("Your coins: "+playerCoins, 10, 54);
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
     // Draw Menu buttons
     menuButton.draw();
     helpButton.draw();
@@ -1966,8 +1489,6 @@ function setBonusSquares(number){
 		RNG.splice(num, 1);
 	}
 }
-
-<<<<<<< HEAD
 function saveGame(){ 
 	console.log("save game");
 	//'1,1,10.' Around 180 characters (6 clouds and 6 QAs) // TODO check if there's anything that actually needes to be saved
@@ -2072,18 +1593,6 @@ function shuffle(array) {
 }
 
 var boardSpaces = [ // The actual board
-=======
-function getDB(){
-	var URL = "/game1.1/gameController";
-	$.getJSON(URL, function(list) {
-		$.each(list, function(index, data) {
-			console.log(data.QuestionID+": "+data.QuestionValue);
-		});
-	});
-}
-
-var boardSpaces = [
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
                    {
                    	sqNum : 0,
                    	x : 6,			// x and y are approximated from the left-hand corner

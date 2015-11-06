@@ -45,18 +45,11 @@ public class GameController extends HttpServlet {
 
 		// Set the response message's MIME type
 		// response.setContentType("text/html; charset=UTF-8");
-<<<<<<< HEAD
-
-=======
-		
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		JsonArray array = new JsonArray();
-
 		// Allocate a output writer to write the response message into the
 		// network socket
-<<<<<<< HEAD
 
 		PrintWriter out = response.getWriter();
 
@@ -110,64 +103,6 @@ public class GameController extends HttpServlet {
 			String gameId = request.getParameter("gameID");
 			out.write(gson.toJson(loadGame(username, gameId)));
 		}
-
-=======
-		
-		PrintWriter out = response.getWriter();
-		
-		Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls()
-				.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
-		
-		String fn = "1"; 	//request.getParameter("fn");
-		
-		/********* call login stored procedure **********/
-				
-		JsonArray array1 = new JsonArray();
-		String username = "user1;";		//request.getParameter("LANID");
-		String password = "password"; 	//request.getParameter("pwd");
-		
-		if(fn.equals("1")){
-		//array1 = aunthenticateLogin(username, password);
-			out.write(gson.toJson(aunthenticateLogin(username, password)));
-		}
-
-		/*************** call new game stored procedure ***************/
-				
-		String gameName = "dummyGame1new1";
-		String qaArray = "Availability";
-		String gameDesc = "dummyGame1NewDesc1";
-
-		// String gameName = request.getParameter("gameName");
-		// String gameDesc = request.getParameter("gameDesc");
-		// String qaArray = request.getParameter("QAArray";)
-		
-		if(fn.equals("2")){
-			out.write(gson.toJson(newGame(username, gameName, gameDesc, qaArray)));
-		}
-
-		/************* save game instance ***********************/
-
-		String lanId = "1001";
-		String modelId = "1";
-		String completed = "0";
-		String betCoins = "100";
-		String netCoins = "1";
-		String[] clouds = {"1","2"};
-		String[] questions = {"I want cake","this is bad"};
-		
-		if(fn.equals("3")){
-			out.write(gson.toJson(saveGame(username, lanId, modelId, gameName, gameDesc, completed, betCoins, netCoins,
-											clouds, questions)));
-		}
-		/**************** load saved game stored procedure *************/
-
-		String gameId = "1101";
-		
-		if(fn.equals("4")){
-			out.write(gson.toJson(loadGame(username, gameId)));
-		}
-	
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	} // end of doGet
 
 	/***************** Authenticate login function ***********************/
@@ -200,15 +135,8 @@ public class GameController extends HttpServlet {
 				elem.addProperty("gameName", rs1.getString("GameName"));
 				elem.addProperty("gameDesc", rs1.getString("GameDescription"));
 				elem.addProperty("gameCompleted", rs1.getString("IsGameCompleted"));
-<<<<<<< HEAD
 				elem.addProperty("coins", rs1.getString("Coins"));
 				array.add(elem);
-				//System.out.println(gson.toJson(elem));
-=======
-				elem.addProperty("coins", rs1.getString("coins"));
-				array.add(elem);
-				// System.out.println(gson.toJson(elem));
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 			}
 
 			rs1.close();
@@ -265,7 +193,6 @@ public class GameController extends HttpServlet {
 
 			while (rs1.next()) {
 				JsonObject elem = new JsonObject();
-<<<<<<< HEAD
 				elem.addProperty("QualityAttributeName", rs1.getString("QualityAttributeName"));
 				elem.addProperty("QuestionID", rs1.getString("QuestionID"));
 				elem.addProperty("QuestionValue", rs1.getString("QuestionValue"));
@@ -278,19 +205,6 @@ public class GameController extends HttpServlet {
 				elem.addProperty("TipDescription", rs1.getString("TipDescription"));
 				elem.addProperty("TipQA", rs1.getString("TipQA"));
 				elem.addProperty("GameID", rs1.getString("GameID"));
-=======
-				elem.addProperty("qaName", rs1.getString("QualityAttributeName"));
-				elem.addProperty("qsId", rs1.getString("QuestionID"));
-				elem.addProperty("qsValue", rs1.getString("QuestionValue"));
-				elem.addProperty("answerId", rs1.getString("AnswerID"));
-				elem.addProperty("answerValue", rs1.getString("AnswerValue"));
-				elem.addProperty("modelId", rs1.getString("ModelID"));
-				elem.addProperty("modelAnsValue", rs1.getString("ModelAnswerValue"));
-				elem.addProperty("tipId", rs1.getString("TipId"));
-				elem.addProperty("tipName", rs1.getString("TipName"));
-				elem.addProperty("tipDescription", rs1.getString("TipDescription"));
-				elem.addProperty("tipQA", rs1.getString("TipQA"));
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 				array.add(elem);
 				// System.out.println(gson.toJson(elem));
 			}
@@ -322,14 +236,8 @@ public class GameController extends HttpServlet {
 	}
 
 	/**************** save game ****************/
-<<<<<<< HEAD
-	private static JsonArray saveGame(String username, String gameId, String modelId,
+private static JsonArray saveGame(String username, String gameId, String modelId,
 			String completed, String betCoins, String netCoins, String clouds, String questions) {
-=======
-
-	private static JsonArray saveGame(String username, String lanId, String modelId, String gameName, String gameDesc,
-			String completed, String betCoins, String netCoins, String[] clouds, String[] questions) {
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		Connection conn = null;
 		CallableStatement cStmt = null;
 		JsonArray array = new JsonArray();
@@ -342,8 +250,6 @@ public class GameController extends HttpServlet {
 			Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls()
 					.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
 			System.out.println("stored proc" + username);
-
-<<<<<<< HEAD
 			cStmt = conn.prepareCall("{CALL spSaveGame(?,?,?,?,?,?,?,?,?)}");
 			System.out.println(cStmt);
 			cStmt.setString(1, username);
@@ -356,38 +262,13 @@ public class GameController extends HttpServlet {
 			cStmt.setString(8, questions);
 			cStmt.registerOutParameter("outID", java.sql.Types.INTEGER);
 			cStmt.execute();
-			
 			JsonObject elem = new JsonObject();
 			elem.addProperty("reviewID", cStmt.getInt(9));
 			array.add(elem);
-			
 			//rs1.close();
-=======
-			cStmt = conn.prepareCall("{CALL spSaveGame(?,?,?,?,?,?,?,?)}");
-			System.out.println(cStmt);
-			cStmt.setString(1, username);
-			cStmt.setInt(2, Integer.parseInt(modelId));
-			cStmt.setInt(3, Integer.parseInt(completed));
-			cStmt.setInt(4, Integer.parseInt(betCoins));
-			cStmt.setInt(5, Integer.parseInt(netCoins));
-			cStmt.setObject(6, clouds);
-			cStmt.setObject(7, questions);
-
-			cStmt.execute();
-			rs1 = cStmt.getResultSet();
-
-			while (rs1.next()) {
-				JsonObject elem = new JsonObject();
-				array.add(elem);
-				// System.out.println(gson.toJson(elem));
-			}
-
-			rs1.close();
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 			cStmt.close();
 			conn.close();
 			return array;
-
 		} catch (SQLException se) {
 			se.printStackTrace();
 		} catch (Exception e) {
@@ -435,7 +316,6 @@ public class GameController extends HttpServlet {
 
 			while (rs1.next()) {
 				JsonObject elem = new JsonObject();
-<<<<<<< HEAD
 				elem.addProperty("GameID", rs1.getString("GameID"));
 				elem.addProperty("GameName", rs1.getString("GameName"));
 				elem.addProperty("CloudModelID", rs1.getString("CloudModelID"));
@@ -458,30 +338,6 @@ public class GameController extends HttpServlet {
 				elem.addProperty("TipName", rs1.getString("TipName"));
 				elem.addProperty("TipDescription", rs1.getString("TipDescription"));
 				elem.addProperty("TipQA", rs1.getString("TipQA"));
-=======
-				elem.addProperty("gameID", rs1.getString("GameID"));
-				elem.addProperty("gameName", rs1.getString("GameName"));
-				elem.addProperty("modelId", rs1.getString("CloudModelID"));
-				elem.addProperty("modelBetCoins", rs1.getString("ModelBettingCoins"));
-				elem.addProperty("netCoins", rs1.getString("netcoins"));
-				elem.addProperty("modelId", rs1.getString("ModelId"));
-				elem.addProperty("qualityAttributeId", rs1.getString("QualityAttributeID"));
-				elem.addProperty("cloudScore", rs1.getString("cloudScore"));
-				elem.addProperty("questionId", rs1.getString("QuestionID"));
-				elem.addProperty("theAnswer", rs1.getString("theAnswer"));
-				elem.addProperty("userNotes", rs1.getString("UserNotes"));
-				elem.addProperty("questionAsked", rs1.getString("QuestionAsked"));
-				elem.addProperty("questionValue", rs1.getString("QuestionValue"));
-				elem.addProperty("answerId", rs1.getString("AnswerID"));
-				elem.addProperty("answerValue", rs1.getString("AnswerValue"));
-				elem.addProperty("modelId", rs1.getString("ModelID"));
-				elem.addProperty("modelAnswerValue", rs1.getString("ModelAnswerValue"));
-				elem.addProperty("qualityAttributeName", rs1.getString("QualityAttributeName"));
-				elem.addProperty("tipId", rs1.getString("TipID"));
-				elem.addProperty("tipName", rs1.getString("TipName"));
-				elem.addProperty("tipDescription", rs1.getString("TipDescription"));
-				elem.addProperty("tipQA", rs1.getString("TipQA"));
->>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 				array.add(elem);
 				// System.out.println(gson.toJson(elem));
 			}
