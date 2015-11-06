@@ -250,6 +250,7 @@ $(document).ready(function(){
 	}
 	//$scope.filteredGames = $.parseJSON(sessionStorage.getItem('games')); scope is not defined! make a function in controller that does this for you?
 	//$scope.$apply();
+	
 	$('#newGame').click(function() {
 		$("#NorE").css("display", "none");
 		$("#NName").css("display", "");
@@ -284,6 +285,8 @@ $(document).ready(function(){
 		}
 		console.log(QAArray);
 	});
+
+	
 	$('#NQABack').click(function(){
 		setActiveStyleSheet("NE");
 		$("#titlePic").css("display", "");

@@ -5,8 +5,7 @@ var context;
 var CANVAS_WIDTH = 1440;
 var CANVAS_HEIGHT = 1200;
 var mode = 4; // 0: normal, 1: help, 2: before event, 3: during event, 4: pregame help, 5: pregame select bet, 
-			  // 6: facts/tips display screen, 7: news display screen (if needed), 8: guess the cloud, 
-			  // 9: game over, 10: menu, 11: onLoad, 12: onLoad completeGame, 13: onLoad beforeStart
+			  // 6: facts/tips display screen, 7: news display screen (if needed), 8: guess the cloud, 9: game over, 10 menu, 11 onLoad, 12 onLoad completeGame, 13 onLoad beforeStart
 var playerStartingCoins = 0; // The amount of coins the user has before starting the game
 var playerCoins = 0; // Coins kept track in the game
 //var bet = -1; // index of bets array
@@ -280,9 +279,12 @@ var helpDesc01 =
 		"squares the pieces may land on, which leads to random " +
 		"events. ";
 /*var helpDesc02 = 
+<<<<<<< HEAD
 =======
 var helpDesc02 = 
 >>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
+=======
+>>>>>>> refs/remotes/origin/Rick's-Branch
 	"Get Coins: Gain coins that can be used for betting on clouds." +
 	"                                                                                                  "+
 	"Facts and Tips: The game gives you interesting facts about clouds and tips for using cloud in your project." +
@@ -297,6 +299,9 @@ var helpDesc02 =
 	"                            " +
 	"                                                                                                                                                     "+
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> refs/remotes/origin/Rick's-Branch
 	"Change Your Bet: Allows you to change the cloud and the amount you bet on.";*/
 var helpDesc02 = 
 	"Get Coins: Gain coins that can be used for betting on clouds." +
@@ -341,6 +346,7 @@ var bet3 = new screenElem("#FFFFFF", null, 838, 828, 120, 60, true, "50", 0, 42,
 var bet4 = new screenElem("#FFFFFF", null, 1074, 828, 120, 60, true, "100", 0, 42, "36px sans-serif", "#001d87"); 
 var bets = [bet1, bet2, bet3, bet4];
 var betButton = new screenElem("#000066", null, 710, 938, 80, 40, true, "Confirm", 0, 24, "bold 16px sans-serif", "#FFFFFF");
+
 //Screen elements for the menu
 var menuBG = new screenElem("#91c0b5", null, 710, 300, 400, 600, true, "", 0, 72, "36px sans-serif", "#001d87");
 var menuTitle = new screenElem("rgba(0, 0, 0, 0)", null, 710, 345, 220, 100, true, "MENU", 0, 24, "bold 48px sans-serif", "#000066");
@@ -450,11 +456,6 @@ function drawPieces() {
 		alert("!"); // Is this really needed?
 		openBonusScreen();
 	}*/
-}
-function drawQues(){
-	for(var i = 0; i < quesAnsw.length; i++){
-		quesAnsw[i].draw();
-	}
 }
 function drawSigns(positions){ // For each piece, draw the floating indicators while preventing complete overlap
 	positions.sort(function(a, b){return b.score > a.score ? 1 : -1;});
@@ -811,6 +812,7 @@ function openEndMenu(){
 	if(mode != 12){
 		saveGame();
 	}
+	// TODO close tab warning if not finished saving
 }
 function openMainMenu(){
 	dimOut.draw(); 
@@ -823,7 +825,7 @@ function openMainMenu(){
 	context.textAlign="left";
 }
 
-function makeMove(array){
+function makeMove(array){ // TODO: character limit?
 	//var array = [1, 2, 3, 4, 5, 6];
 	//var array = [1, 1, 1, 1, 1, 1]; //Switch arrays to see how it looks like if all 6 is clumped together
 	//console.log("Below");
@@ -995,9 +997,16 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 			bet = -1;
 		}
 	}
+	
+	//console.log(gameName);
 	/*for(var j in pieces){
 		console.log("The "+pieces[j].name+" piece is the cloud "+pieces[j].cloud+".");
 	}*/
+	
+	
+	
+	
+	
 	canvas.addEventListener('mousemove', function(evt) { // Function to handle mousing over screen elements
 	    var mousePos = getMousePos(canvas, evt);
 	    var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
@@ -1056,7 +1065,8 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	    }
 	    //writeMessage(canvas, message);
 	 }, false);
-$("#interface").click(function(evt){ // Function to handle click events
+
+	$("#interface").click(function(evt){ // Function to handle click events
 	    var x = Math.floor((evt.pageX-$("#interface").offset().left) / 20);
 	    var y = Math.floor((evt.pageY-$("#interface").offset().top) / 20);
 		var mousePos = getMousePos(canvas, evt);
@@ -1081,12 +1091,8 @@ $("#interface").click(function(evt){ // Function to handle click events
         				var userTxt = document.getElementById('userComments').value;
         				if(userTxt.indexOf("~") == -1 && userTxt.indexOf("|") == -1){
         					QList[curQues].comment = userTxt;
-        					$("#userComments").val('');     					 
-        					/*for(var j=0;j<=i;j++){
-        						quesAnsw = [new piece("star6", 342, 758, 100, "bstar", "0", "120", "255")];
-	                		}*/
-        					makeMove(answerQuestion(i));
-	                		
+        					$("#userComments").val('');
+	                		makeMove(answerQuestion(i));
         				} else {
         					alert("Please remove special characters ~ and | from your comments below.");
         				}
@@ -1098,14 +1104,9 @@ $("#interface").click(function(evt){ // Function to handle click events
 	    			if(pieces[i].clicked(mousePos.x, mousePos.y)){
 	    				$("#msg").text("The "+pieces[i].name+" piece is clicked! "+message);
 	            		//alert("The "+pieces[i].name+" piece is clicked! "+message);
-	            		isClicked = true;
 	        			break;
 	            	}
 	    		}
-	        }
-	        if(!isClicked){
-	        	$("#msg").text("Didn't click on anything. "+message);
-	        	//alert("Didn't click on anything. "+message);
 	        }*/
 	    } else if(mode == 1) {
 	    	mode = 0;
@@ -1371,15 +1372,25 @@ function answerQuestion(ans){ // Calculates how many spaces to move each piece
 		nextQuestion();
 	} else {
 		var pts = QList[curQues].answer[ans].points;
+		//console.log(pts);
 		var arr = [];
 		for(var i = 0, len = pieces.length; i < len; i++){
 			var score = pts[cloudList.indexOf(pieces[i].cloud)];
+			//console.log(score);
 			arr.push(score);
-			var QAIndex = QAArray.indexOf(""+(QAIDList.indexOf(QList[curQues].QA)+1));;
+			var QAIndex = QAArray.indexOf(""+(QAIDList.indexOf(QList[curQues].QA)+1));
+			//console.log(QAIDList.indexOf(QList[curQues].QA));
+			//console.log(QList[curQues].QA);
+			//console.log(QAArray);
+			//console.log(QAIndex);
 			pieces[i].score = parseInt(pieces[i].score) + parseInt(score);
+			//console.log(score);
+			//console.log("Before: "+pieces[i].QAScores[QAIndex]);
 			if(QAIndex > -1){
 				pieces[i].QAScores[QAIndex] = parseInt(pieces[i].QAScores[QAIndex]) + parseInt(score); 
 			}
+			//console.log(score);
+			//console.log("After: "+pieces[i].QAScores[QAIndex]);
 		}
 		QList[curQues].answered = true;
 		QList[curQues].choice = QList[curQues].answer[ans].id;
@@ -1441,6 +1452,7 @@ function reset(){ // Not actually used anymore
 	curQues = -1
 	boardSpaces[0].occupants = [0, 1, 2, 3, 4, 5];
 }
+
 function drawSquares() { // draw the screen elements
 	// Draw the background for the Menu bar
 	HUD.draw();
@@ -1458,7 +1470,6 @@ function drawSquares() { // draw the screen elements
     context.font = 'bold 18pt Calibri';
     context.fillStyle = 'black';
     //console.log(gameName);
-    //context.fillText(gameName, 10, 25);
     context.fillText(gameName, 10, 25);
     context.font = '18pt Calibri';
     context.fillStyle = 'black';

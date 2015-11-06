@@ -54,7 +54,6 @@ $(document).ready(function() {
 //canvasChart.show();
 
 	makeChart();
-
 	
 	$('#legend0').click(function() {
 		if(myRadarChart.datasets[0].strokeColor == tea+"1)"){
@@ -297,4 +296,3 @@ function displayCloudStats(num){
 	cloudText+="</p><p>Total Score: "+total+". Average: "+total/myRadarChart.datasets[num].points.length+". </p>";
 	document.getElementById('cloudDesc').innerHTML = cloudText;
 }
-

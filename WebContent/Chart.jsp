@@ -159,6 +159,9 @@
 		radarChartData.datasets[5].data[5] = 50;
 		
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> refs/remotes/origin/Rick's-Branch
 		<%-- var options = {
 			    segmentShowStroke: false,
 			    animateRotate: true,
@@ -166,6 +169,7 @@
 			    percentageInnerCutout: 50,
 			    tooltipTemplate: "<%= value %>%"
 			} --%>
+<<<<<<< HEAD
 =======
 		var options = {
 			    segmentShowStroke: false,
@@ -175,6 +179,8 @@
 			    <%-- tooltipTemplate: "<%= value %>%" --%>
 	//}
 >>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
+=======
+>>>>>>> refs/remotes/origin/Rick's-Branch
 		
 		myRadarChart = new Chart(chart).Radar(radarChartData,
 				{

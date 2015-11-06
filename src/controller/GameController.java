@@ -45,9 +45,11 @@ public class GameController extends HttpServlet {
 
 		// Set the response message's MIME type
 		// response.setContentType("text/html; charset=UTF-8");
+
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		JsonArray array = new JsonArray();
+
 		// Allocate a output writer to write the response message into the
 		// network socket
 
@@ -103,6 +105,7 @@ public class GameController extends HttpServlet {
 			String gameId = request.getParameter("gameID");
 			out.write(gson.toJson(loadGame(username, gameId)));
 		}
+
 	} // end of doGet
 
 	/***************** Authenticate login function ***********************/
@@ -137,6 +140,7 @@ public class GameController extends HttpServlet {
 				elem.addProperty("gameCompleted", rs1.getString("IsGameCompleted"));
 				elem.addProperty("coins", rs1.getString("Coins"));
 				array.add(elem);
+				//System.out.println(gson.toJson(elem));
 			}
 
 			rs1.close();
@@ -236,7 +240,7 @@ public class GameController extends HttpServlet {
 	}
 
 	/**************** save game ****************/
-private static JsonArray saveGame(String username, String gameId, String modelId,
+	private static JsonArray saveGame(String username, String gameId, String modelId,
 			String completed, String betCoins, String netCoins, String clouds, String questions) {
 		Connection conn = null;
 		CallableStatement cStmt = null;
@@ -250,6 +254,7 @@ private static JsonArray saveGame(String username, String gameId, String modelId
 			Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls()
 					.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
 			System.out.println("stored proc" + username);
+
 			cStmt = conn.prepareCall("{CALL spSaveGame(?,?,?,?,?,?,?,?,?)}");
 			System.out.println(cStmt);
 			cStmt.setString(1, username);
@@ -262,13 +267,16 @@ private static JsonArray saveGame(String username, String gameId, String modelId
 			cStmt.setString(8, questions);
 			cStmt.registerOutParameter("outID", java.sql.Types.INTEGER);
 			cStmt.execute();
+			
 			JsonObject elem = new JsonObject();
 			elem.addProperty("reviewID", cStmt.getInt(9));
 			array.add(elem);
+			
 			//rs1.close();
 			cStmt.close();
 			conn.close();
 			return array;
+
 		} catch (SQLException se) {
 			se.printStackTrace();
 		} catch (Exception e) {
