@@ -48,12 +48,12 @@ var qString = [""]; // String representation of questions array for saving to DB
 var currentSave = 0; // Determines which data to save (if case DB gives an unfavorable response)
 
 
-function piece(name, x, y, sprite, colorR, colorG, colorB) { // Function for creating the pieces in the game, as well as the floating position indicators
+function piece(name, x, y, width,sprite, colorR, colorG, colorB) { // Function for creating the pieces in the game, as well as the floating position indicators
     this.name = name;  
     this.loc = 0;
     this.x = x;
     this.y = y;
-    this.width = 60;
+    this.width = width;
     this.height = this.width;
     this.sprite = Sprite(sprite);
     this.score = 0;
@@ -237,20 +237,27 @@ function screenElem(color, sprite, x, y, width, height, hasText, text, textOffse
 }
 
 // Screen elements for the HUD
-var HUD = new screenElem("#8fefbf", null, 4, 4, 1432, 60, false, null, null, null, null, null);
+var HUD = new screenElem("#8fefbf", null, 0, 0, 1432, 60, false, null, null, null, null, null);
 var menuButton = new screenElem("#000066", null, 1374, 30, 60, 34, true, "Menu", 9, 22, "bold 16px sans-serif", "#FFFFFF");
 var helpButton = new screenElem("#000066", null, 1310, 30, 60, 34, true, "Help", 12, 22, "bold 16px sans-serif", "#FFFFFF");
 
 // Screen elements for the questions in the center of the board
-var quesBG = new screenElem("#FFFFFF", null, 248, 336, 944, 584, false, null, null, null, null, null);
+var quesBG = new screenElem("#FFFFFF", null, 248, 336, 994, 584, false, null, null, null, null, null);
 var quesTitle = new screenElem("#99ff99", null, 715, 360, 894, 100, true, "", 0, 66, "bold 64px sans-serif", "#000000"); // 859 max text length 40
-var quesAnsw = [ 
-     new screenElem("#45e545", null, 342, 490, 764, 64, true, "5: Completely essential.", 16, 46, "36px sans-serif", "#000000"),
-     new screenElem("#45e545", null, 342, 574, 764, 64, true, "4: Useful.", 16, 46, "36px sans-serif", "#000000"),
-     new screenElem("#45e545", null, 342, 658, 764, 64, true, "3: Useful but not a priority.", 16, 46, "36px sans-serif", "#000000"),
-     new screenElem("#45e545", null, 342, 742, 764, 64, true, "2: Not important.", 16, 46, "36px sans-serif", "#000000"),
-     new screenElem("#45e545", null, 342, 826, 764, 64, true, "1: Not needed.", 16, 46, "36px sans-serif", "#000000") //console.log(context.measureText(this.text).width); //729 is max?
-];
+
+var star1 = new piece("star1", 342, 608, 100, "wstar", "0", "120", "255");
+var star2 = new piece("star2", 492, 608, 100, "wstar", "0", "120", "255");
+var star3 =  new piece("star3", 642, 608, 100, "wstar", "0", "120", "255");
+var star4 = new piece("star4", 792, 608, 100, "wstar", "0", "120", "255");
+var star5 = new piece("star5", 942, 608, 100, "wstar", "0", "120", "255");     
+var quesAnsw = [star1, star2, star3, star4, star5];		//white stars
+
+var star11 = new piece("star1", 342, 608, 100, "bstar", "0", "120", "255");
+var star12 = new piece("star2", 492, 608, 100, "bstar", "0", "120", "255");
+var star13 =  new piece("star3", 642, 608, 100, "bstar", "0", "120", "255");
+var star14 = new piece("star4", 792, 608, 100, "bstar", "0", "120", "255");
+var star15 = new piece("star5", 942, 608, 100, "bstar", "0", "120", "255");     
+var quesAnsw2 = [star11, star12, star13, star14, star15];	//blue stars
 
 // Other elements
 var dimOut = new screenElem("rgba(211, 211, 211, 0.5)", null, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, false, null, null, null, null, null);
@@ -272,6 +279,12 @@ var helpDesc01 =
 		"squares the pieces may land on, which leads to random " +
 		"events. ";
 /*var helpDesc02 = 
+<<<<<<< HEAD
+=======
+var helpDesc02 = 
+>>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
+=======
+>>>>>>> refs/remotes/origin/Rick's-Branch
 	"Get Coins: Gain coins that can be used for betting on clouds." +
 	"                                                                                                  "+
 	"Facts and Tips: The game gives you interesting facts about clouds and tips for using cloud in your project." +
@@ -285,6 +298,10 @@ var helpDesc01 =
 	"Guess Which Cloud is First: Shows you what cloud the piece in 1st place represents and gives you coins if you guess correctly." +
 	"                            " +
 	"                                                                                                                                                     "+
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> refs/remotes/origin/Rick's-Branch
 	"Change Your Bet: Allows you to change the cloud and the amount you bet on.";*/
 var helpDesc02 = 
 	"Get Coins: Gain coins that can be used for betting on clouds." +
@@ -911,12 +928,12 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	nextQuestion(); 
 	
 	if(qClouds == null){
-		var tea = new piece("tea", 70, 920, "bcs-tea", "100", "120", "0");
-		var blue = new piece("blue", 0, 980, "bcs-blue", "0", "120", "255");
-		var red = new piece("red", 30, 1000, "bcs-red", "255", "0", "0");
-		var black = new piece("black", 0, 920, "bcs-black", "50", "50", "50");
-		var green = new piece("green", 30, 950, "bcs-green", "0", "180", "0");
-		var purple = new piece("purple", 70, 980, "bcs-purple", "255", "0", "255");
+		var tea = new piece("tea", 70, 920,60, "bcs-tea", "100", "120", "0");
+		var blue = new piece("blue", 0, 980, 60, "bcs-blue", "0", "120", "255");
+		var red = new piece("red", 30, 1000, 60, "bcs-red", "255", "0", "0");
+		var black = new piece("black", 0, 920, 60, "bcs-black", "50", "50", "50");
+		var green = new piece("green", 30, 950, 60, "bcs-green", "0", "180", "0");
+		var purple = new piece("purple", 70, 980, 60, "bcs-purple", "255", "0", "255");
 		pieces = [tea, blue, red, black, green, purple];
 		var tempList = cloudList.slice();
 		for(var i in pieces){
@@ -935,7 +952,7 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 		var scoreTrack = 0;
 		//console.log(qClouds);
 		for(var i = 0; i < 6; i++){
-			pieces.push(new piece(pieceNames[i], 0, 0, "bcs-"+pieceNames[i], pieceColors[i].red, pieceColors[i].green, pieceColors[i].blue));
+			pieces.push(new piece(pieceNames[i], 0, 0,60, "bcs-"+pieceNames[i], pieceColors[i].red, pieceColors[i].green, pieceColors[i].blue));
 			for(var k in QAArray){ // Initialize scores array for each cloud
 				pieces[pieces.length-1].QAScores.push(0);
 			}
@@ -990,7 +1007,6 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	
 	
 	
-	
 	canvas.addEventListener('mousemove', function(evt) { // Function to handle mousing over screen elements
 	    var mousePos = getMousePos(canvas, evt);
 	    var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
@@ -1017,7 +1033,21 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	    		bonusText3.draw();
 	    		context.textAlign = "left";
 	    	}
-	    } else if(mode == 9 || mode == 12){
+	    } else if(mode == 0){
+	    	for(var i = 0; i < quesAnsw.length; i++){
+	    		if(quesAnsw[i].clicked(mousePos.x,mousePos.y)){
+	    			for(var j=0;j<quesAnsw.length;j++){
+	    				if(j <= i){
+	    					quesAnsw2[j].draw();
+	    				} else {
+	    					quesAnsw[j].draw();
+	    				}
+	    			}
+	    			break;
+	    		}
+	    	}
+	    }
+	    else if(mode == 9 || mode == 12){
 	    	var hover = false;
 	    	for(var i in pieces){
 	    		if(pieces[i].clicked(mousePos.x, mousePos.y)){
@@ -1035,7 +1065,7 @@ function prepGame(qQues, qTips, qClouds){ // Function to run when starting the g
 	    }
 	    //writeMessage(canvas, message);
 	 }, false);
-	
+
 	$("#interface").click(function(evt){ // Function to handle click events
 	    var x = Math.floor((evt.pageX-$("#interface").offset().left) / 20);
 	    var y = Math.floor((evt.pageY-$("#interface").offset().top) / 20);
@@ -1380,10 +1410,7 @@ function nextQuestion(){ // Load the next question into the screen elements, or 
 	if(curQues+1<QList.length){
 		curQues = curQues + 1;
 		quesTitle.text = QList[curQues].title;
-		//console.log(quesAnsw);
 		for(var i = 0, len = quesAnsw.length; i < len; i++){
-			//console.log(i+" is num?");
-			//console.log(QList);
 			quesAnsw[i].text = QList[curQues].answer[i].title;
 		}
 		questionAsked += 1;
@@ -1473,7 +1500,6 @@ function setBonusSquares(number){
 		RNG.splice(num, 1);
 	}
 }
-
 function saveGame(){ 
 	console.log("save game");
 	//'1,1,10.' Around 180 characters (6 clouds and 6 QAs) // TODO check if there's anything that actually needes to be saved
