@@ -158,6 +158,7 @@
 		radarChartData.datasets[4].data[5] = 40;
 		radarChartData.datasets[5].data[5] = 50;
 		
+<<<<<<< HEAD
 		<%-- var options = {
 			    segmentShowStroke: false,
 			    animateRotate: true,
@@ -165,6 +166,15 @@
 			    percentageInnerCutout: 50,
 			    tooltipTemplate: "<%= value %>%"
 			} --%>
+=======
+		var options = {
+			    segmentShowStroke: false,
+			    animateRotate: true,
+			    animateScale: false,
+			    percentageInnerCutout: 50}
+			    <%-- tooltipTemplate: "<%= value %>%" --%>
+	//}
+>>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		
 		myRadarChart = new Chart(chart).Radar(radarChartData,
 				{

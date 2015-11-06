@@ -6,6 +6,7 @@ body {
 #page { 
 	font-family: 'Open Sans', sans-serif;
 	text-align: center; 
+<<<<<<< HEAD
 	padding: 1%;
 }
 
@@ -42,6 +43,15 @@ body {
 	border: 3px solid gray;
 	margin: 1%;
 	padding: 1%;
+=======
+	padding: 5%;
+}
+
+.qa {
+	border: 3px solid gray;
+	margin: 4%;
+	padding: 3%;
+>>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	display: inline-block;
 	cursor: pointer;
 	background-color: white;
@@ -60,6 +70,7 @@ body {
     height: 80px;
 }
 
+<<<<<<< HEAD
 .FGText{
 	color: #FFFFFF;
 }
@@ -76,3 +87,5 @@ a:hover {
 a:active {
     color: #008080;
 }
+=======
+>>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa

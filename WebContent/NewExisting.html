@@ -30,9 +30,17 @@
 		<div class="header">
 			<img src="Logo1.png" alt="logo" align="center" id="titlePic"/>
 		</div>
+<<<<<<< HEAD
 		<span id="NorE" class="spaces" >
 			<span id="welcomeTitle" style="display:none;"><h2>What do you want to do today, </h2></span>
 			</br></br></br></br>
+=======
+		<br>
+		<br>
+		<br>
+		<br>
+		<span id="NorE" class="spaces" >
+>>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 			<label><button id="newGame" type= "New" class="btn btn-default btn-lg" style= "margin-right:15%">New Project</button></label>
 			<label><button id="existingGame" type= "Existing" class="btn btn-default btn-lg" style= "margin-left:30%">Existing Project</button></label>
 		</span>
@@ -54,6 +62,7 @@
 		</span>
 		
 		<span id="NQA" style="display:none;">
+<<<<<<< HEAD
 		<h2>Please select all the quality attributes relevant to your problem, then click on 'Play'</h2>
 		<div id="page">
 		<table class="table" id="QATable">
@@ -171,17 +180,56 @@
 				
 				
 				
+=======
+			<div id="page"> 
+				<h2>Please select the quality attribute(s) relevant to your problem.</h2>
+				<div class="qa" id="QA1" value="Availability">
+					<h2>Availability</h2>
+					<p>Quality attribute definition goes here. </p>
+				</div>
+				<div class="qa" id="QA2" value="Security">
+					<h2>Security</h2>
+					<p>Quality attribute definition goes here. </p>
+				</div>
+				<div class="qa" id="QA3" value="Performance">
+					<h2>Performance</h2>
+					<p>Quality attribute definition goes here. </p>
+				</div>
+				<div class="qa" id="QA4" value="Integrability">
+					<h2>Integrability</h2>
+					<p>Quality attribute definition goes here. </p>
+				</div>
+				<div class="qa" id="QA5" value="Scalability">
+					<h2>Scalability</h2>
+					<p>Quality attribute definition goes here. </p>
+				</div>
+				<div class="qa" id="QA6" value="Maintainability">
+					<h2>Maintainability</h2>
+					<p>Quality attribute definition goes here. </p>
+				</div>
+				<div>
+					<button name="submit" id="NQASubmit" class="btn btn-default" >Begin the game!</button>
+					<button name="back" id="NQABack" class="btn btn-default" >Back</button>
+				</div>
+			</div>
+		</span>
+>>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		<div id="EChoose" style="display:none;" ng-app="GameApp" ng-controller="dataController"> 
 				<!-- Print the list of games, using angular or injection -->
 				 <table class="table" id="table">
 		 	 		<thead>
 		  	 			<tr>
 						<th ng-click="sortBy('name')" id="nameTitle">Name of Game</th>
+<<<<<<< HEAD
 						<th ng-click="sortBy('des')" id="descriptionTitle">Game Description</th>
+=======
+						<th ng-click="sortBy('description')" id="descriptionTitle">Game Description</th>
+>>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 						<th ng-click="sortBy('completed')" id="completedTitle">Completed?</th>
 						</tr>
 					</thead>
 		   	 		<tbody>
+<<<<<<< HEAD
 		  	 	    	<tr ng-repeat="row in games = (filteredGames | filter : {title: searchString} | orderBy : sortCol : sortReverse) track by $index"> 
 							<td id="name">{{row.name}}</td>
 							<td id="description">{{row.des}}</td>
@@ -193,11 +241,22 @@
 				<span id="noneFound" style="display:none;"><h3>It seems you haven't played any games yet. Press the back button and start a new project!</h3>
 					<br/><br/><br/><br/><br/>
 				</span>
+=======
+		  	 	    	<tr ng-repeat="row in games = (filteredGames | filter : {title: searchString} | orderBy : sortCol : sortReverse)"> 
+							<td id="name">{{row.name}}</td>
+							<td id="description">{{row.description}}</td>
+							<td id="completed">{{row.completed}}</td>
+							<td id="select"><button name="submit" id=ESelect{{row.id}} class="btn btn-default" value={{row.id}} ng-click="selectGame(row.id)">Select</button></td>
+			    		</tr> 
+			    	</tbody> 
+				</table> 
+>>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 				<div>
 					<button name="back" id="ECBack" class="btn btn-default" >Back</button>
 				</div>
 		</div>
 		<div id="game" style="display:none;">
+<<<<<<< HEAD
 			<figure>
 				<div style="width: 100%; overflow: hidden;">
 					<div id="app" style="float: left; position:relative;margin-top: 0%" >
@@ -211,6 +270,20 @@
 				</div>
 			</figure>
 			<div class="FGText">This game used icons by <a href="http://www.freepik.com" title="Freepik">Freepik</a> and <a href="http://www.typicons.com" title="Stephen Hutchings">Stephen Hutchings</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> are licensed under <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
+=======
+			<div id="header" style="display:none;">
+				<h2>The game is below:</h2>
+				<p id="posMsg1">Please move your mouse over the canvas.</p>
+				<p id="msg"></p>
+			</div>
+			<figure>
+				<div id="app">
+					 <canvas name="game" id="interface" width="1440" height="1200" style="border:1px dotted;"></canvas>
+				</div>
+			</figure>
+			<button type='button' class="btn btn-primary" id="move" style="visibility: hidden">Move</button> 
+			<p id="posMsg2" style="display:none;">Please move your mouse over the canvas.</p>
+>>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 		</div>
 		
 	</body> 

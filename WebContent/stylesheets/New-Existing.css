@@ -2,7 +2,11 @@
 
 body {
 	font-family: 'Open Sans', sans-serif;
+<<<<<<< HEAD
 	/* margin-top: 2%; */
+=======
+	margin-top: 2%;
+>>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
 	margin-left: 35%; 
 	margin-right: 35%;
 	background-color: #cccccc;
@@ -30,6 +34,7 @@ h1 {
 	margin-left: 15%;
 	font-size: 20px;
 	
+<<<<<<< HEAD
 }
 
 #app{
@@ -37,3 +42,7 @@ h1 {
 	margin-top: 0%;
 	
 }
+=======
+	
+}
+>>>>>>> 32488006180bc92f045b0f8ccd8e78d6de5842fa
