@@ -21,8 +21,8 @@ var MAX_BONUS_SQUARES = 8;
 var showBonus = 0; // The number of turns bonus squares are drawn on the board ("Show Bonus Squares" event)
 var bonusCount = 0; // Keeps track of the # bonus squares that are landed on in a turn
 //var lowEvents = ["Facts and Tips", "Current News", "Show Bonus Squares", "Guess Which Cloud is First", "Get Coins"]; // News is not in DB yet
-//var lowEvents = ["Facts and Tips", "Show Bonus Squares", "Guess Which Cloud is First", "Get Coins"];
-var lowEvents = ["Facts and Tips", "Facts and Tips"]; 
+var lowEvents = ["Facts and Tips", "Show Bonus Squares", "Guess Which Cloud is First", "Get Coins"];
+//var lowEvents = ["Facts and Tips", "Facts and Tips"]; 
 var midEvents = ["Guess Which Cloud is First", "Change Your Bet", "Get Coins"];
 var lastEvent = "none";
 //var newsArray = ["A cloud just walked into a bar. It dissolved into precipitation.", "Three clouds were seen suspiciously loitering around a tobacco store.", "Prince Cumulus and Princess Cirrostratus have set their wedding day to July of 2016."];
@@ -693,7 +693,7 @@ function openTextMenu(type){
 				num += 1;
 			}
 			console.log(num);
-			if(num < QList.length){
+			if(num < tipsArray.length){
 				bonusText1.text = tipsArray[num].TipName;
 				bonusText2.text = tipsArray[num].TipDescription;
 				tipsArray.splice(num, 1);
